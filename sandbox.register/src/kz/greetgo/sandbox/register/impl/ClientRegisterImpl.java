@@ -65,60 +65,62 @@ public class ClientRegisterImpl implements ClientRegister {
     }
 
     private void editExistedClient(ClientDetail cd) {
-        if (cd.surname!=null)
-            clientDao.get().updateClientField(cd.id, "surname", cd.surname);
+        clientDao.get().updateClientField(cd.id, "surname", cd.surname);
+        clientDao.get().updateClientField(cd.id, "name", cd.name);
 
-        if (cd.name!=null)
-            clientDao.get().updateClientField(cd.id, "name", cd.name);
-
-        if (cd.patronymic!=null)
+        if (cd.patronymic != null)
             clientDao.get().updateClientField(cd.id, "patronymic", cd.patronymic);
 
-        if (cd.gender!=null)
-            clientDao.get().updateClientField(cd.id, "gender", cd.gender);
+        clientDao.get().updateClientField(cd.id, "gender", cd.gender);
 
-        if (cd.birthDate!=null) {
-            clientDao.get().updateClientField(cd.id, "birth_date", cd.birthDate);
-        }
+        clientDao.get().updateClientField(cd.id, "birth_date", cd.birthDate);
 
-        if (cd.charm != 0)
-            clientDao.get().updateClientField(cd.id, "charm", cd.charm);
+        clientDao.get().updateClientField(cd.id, "charm", cd.charm);
 
-        if (cd.factStreet!=null)
-            clientDao.get().updateClientAddrFACTField(cd.id, "street", cd.factStreet);
-
-        if (cd.factNo!=null)
-            clientDao.get().updateClientAddrFACTField(cd.id, "house", cd.factNo);
-
-        if (cd.factFlat!=null)
-            clientDao.get().updateClientAddrFACTField(cd.id, "flat", cd.factFlat);
+        updateFactAddress(cd);
 
         //reg
-        if (cd.regStreet!=null)
-            clientDao.get().updateClientAddrREGField(cd.id, "street", cd.regStreet);
+        clientDao.get().updateClientAddrREGField(cd.id, "street", cd.regStreet);
 
-        if (cd.regNo!=null)
-            clientDao.get().updateClientAddrREGField(cd.id, "house", cd.regNo);
+        clientDao.get().updateClientAddrREGField(cd.id, "house", cd.regNo);
 
-        if (cd.regFlat!=null)
-            clientDao.get().updateClientAddrREGField(cd.id, "flat", cd.regFlat);
+        clientDao.get().updateClientAddrREGField(cd.id, "flat", cd.regFlat);
 
         //phones
-        if (cd.homePhoneNumber!=null)
-            clientDao.get().updateClientPhoneNumber(cd.id, cd.homePhoneNumber, "HOME");
+        updatePhoneNumber(cd.id, cd.homePhoneNumber, "HOME");
 
-        if (cd.workPhoneNumber!=null)
-            clientDao.get().updateClientPhoneNumber(cd.id, cd.workPhoneNumber, "WORK");
+        updatePhoneNumber(cd.id, cd.workPhoneNumber, "WORK");
 
-        if (cd.mobileNumber1!=null)
-            clientDao.get().updateClientPhoneNumber(cd.id, cd.mobileNumber1, "MOBILE");
+        //mobile
+        clientDao.get().updateClientPhoneNumber(cd.id, cd.mobileNumber1, "MOBILE1");
 
-        if (cd.mobileNumber2!=null)
-            clientDao.get().updateClientPhoneNumber(cd.id, cd.mobileNumber2, "MOBILE");
+        checkAndUpdateMobileNumber(cd.id, cd.mobileNumber2, "MOBILE2");
 
-        if (cd.mobileNumber3!=null)
-            clientDao.get().updateClientPhoneNumber(cd.id, cd.mobileNumber3, "MOBILE");
+        checkAndUpdateMobileNumber(cd.id, cd.mobileNumber3, "MOBILE3");
 
+    }
+
+    private void updatePhoneNumber(int id, String phoneNumber, String type) {
+        if (phoneNumber != null) {
+            if (clientDao.get().checkForExistPhoneNumberType(id, type) != null) {//update
+                clientDao.get().updateClientPhoneNumber(id, phoneNumber, type);
+            } else {//insert
+                clientDao.get().insertIntoClientPhone(id, type, phoneNumber);
+            }
+        }
+    }
+
+    private void updateFactAddress(ClientDetail cd) {
+        if (clientDao.get().checkIfFactAddressRecordExists(cd.id) == null) {
+            clientDao.get().insertIntoClientAddrFACT(cd);
+        } else {
+            if (cd.factStreet != null)
+                clientDao.get().updateClientAddrFACTField(cd.id, "street", cd.factStreet);
+            if (cd.factNo != null)
+                clientDao.get().updateClientAddrFACTField(cd.id, "house", cd.factNo);
+            if (cd.factFlat != null)
+                clientDao.get().updateClientAddrFACTField(cd.id, "flat", cd.factFlat);
+        }
     }
 
     private void addNewClient(ClientDetail cd) {
@@ -128,26 +130,50 @@ public class ClientRegisterImpl implements ClientRegister {
         clientDao.get().insertIntoClient(id, cd);
         cd.id = id;
 
-        if (cd.factStreet!=null && cd.factNo!=null && cd.factFlat!=null) {
+        if (cd.patronymic != null)
+            clientDao.get().updateClientField(id, "patronymic", cd.patronymic);
+
+        if (cd.factStreet != null)
             clientDao.get().insertIntoClientAddrFACT(cd);
-        }
 
-        if (cd.regStreet!=null && cd.regNo!=null && cd.regFlat!=null)
-            clientDao.get().insertIntoClientAddrREG(cd);
+        clientDao.get().insertIntoClientAddrREG(cd);
 
-        if (cd.homePhoneNumber!=null)
+        if (cd.homePhoneNumber != null)
             clientDao.get().insertIntoClientPhone(id, "HOME", cd.homePhoneNumber);
 
-        if (cd.workPhoneNumber!=null)
+        if (cd.workPhoneNumber != null)
             clientDao.get().insertIntoClientPhone(id, "WORK", cd.workPhoneNumber);
 
-        if (cd.mobileNumber1!=null)
-            clientDao.get().insertIntoClientPhone(id, "MOBILE", cd.mobileNumber1);
+        clientDao.get().insertIntoClientPhone(id, "MOBILE1", cd.mobileNumber1);
 
-        if (cd.mobileNumber2!=null)
-            clientDao.get().insertIntoClientPhone(id, "MOBILE", cd.mobileNumber2);
+        checkMobileNumber(id, cd.mobileNumber2, "MOBILE2");
 
-        if (cd.mobileNumber3!=null)
-            clientDao.get().insertIntoClientPhone(id, "MOBILE", cd.mobileNumber3);
+        checkMobileNumber(id, cd.mobileNumber3, "MOBILE3");
     }
+
+    void checkMobileNumber(int id, String mobileNumber, String type) {
+        if (mobileNumber != null) {
+
+            //1. check with M1, M2, M3 numbers
+            if (clientDao.get().checkForDublicateMobileNumber(id, mobileNumber) == null) { //if such number does not exist insert
+                clientDao.get().insertIntoClientPhone(id, type, mobileNumber);
+            }
+        }
+    }
+
+    void checkAndUpdateMobileNumber(int clientID, String number, String type) {
+        if (number != null) {
+            //check for dublicate
+            //if not exist such mobile number for that client
+            if (clientDao.get().checkForDublicateMobileNumber(clientID, number) == null) {
+                //check for exiting mobile number for client for that type
+                if (clientDao.get().checkForExistPhoneNumberType(clientID, type) == null) {//insert
+                    clientDao.get().insertIntoClientPhone(clientID, type, number);
+                } else {//update
+                    clientDao.get().updateClientPhoneNumber(clientID, number, type);
+                }
+            }
+        }
+    }
+
 }

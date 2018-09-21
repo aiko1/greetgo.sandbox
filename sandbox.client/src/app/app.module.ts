@@ -23,12 +23,14 @@ import {KeyFilterModule} from 'primeng/keyfilter';
 import {TooltipModule} from 'primeng/tooltip';
 import {PaginatorModule} from 'primeng/paginator';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import { EditClientComponent } from './edit-client/edit-client.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     ClientListComponent,
+    EditClientComponent,
   ],
   imports: [
     BrowserModule,

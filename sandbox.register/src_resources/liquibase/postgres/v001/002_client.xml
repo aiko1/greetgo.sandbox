@@ -46,7 +46,7 @@
       create table client_phone (
         client int REFERENCES client(id),
         number varchar(100),
-        type varchar(100) CHECK (type IN ( 'HOME', 'WORK', 'MOBILE'))
+        type varchar(100) CHECK (type IN ( 'HOME', 'WORK', 'MOBILE1', 'MOBILE2', 'MOBILE3'))
       )
     ]]></sql>
   </changeSet>

@@ -19,7 +19,6 @@ public class ClientRegisterImplTest extends ParentTestNg {
 
     FilterParams params = new FilterParams();
     List<ClientRecord> clients;
-    ClientRecord client;
 
     @Test
     public void getClientList_simple_record() {
@@ -191,46 +190,117 @@ public class ClientRegisterImplTest extends ParentTestNg {
 
         ClientDetail cd = new ClientDetail(0, "Ivanov", "Petr", "MALE", java.sql.Date.valueOf("1993-01-31"), 1, 5, "RegStreet",
                 "RegHouse", "regFlat", "8-777-555-55-55");
+        cd.mobileNumber3 = "4";
 
         //call testing method
         clientRegister.get().editClient(cd);
 
         //get from test dao
-
         ClientDetail cdTest = clientTestDao.get().selectClientByName("Petr");
         System.out.println(cdTest.mobileNumber1);
 
         //test
         assertThat(cdTest).isNotNull();
         assertThat(Objects.equals(cdTest.surname, cd.surname));
+        assertThat(cdTest.mobileNumber3).isEqualTo("4");
         assertThat(Objects.equals(cdTest.name, cd.name));
         assertThat(Objects.equals(cdTest.mobileNumber1, cd.mobileNumber1));
     }
 
     @Test
     public void editClient_test() {
-//        deleteAllClients();
-//
-//        //init data
-//        ClientDetail cd = new ClientDetail(0, "Ivanov", "Vasy", "MALE", java.sql.Date.valueOf("1993-01-31"), 1, 5, "RegStreet",
-//                "RegHouse", "regFlat", "8-777-555-55-55");
-////
-////        //call testing method
-//        clientRegister.get().editClient(cd);
-//
-//        //get from test dao
-        ClientDetail cdTest = clientTestDao.get().selectClientByName("Vasy");
-//        System.out.println(cdTest.id);
-//
+        deleteAllClients();
+
+        //init data
+        int id = RND.plusInt(1000000);
+        ClientDetail cd = new ClientDetail(id, "Igoreva", "Natazha",
+                "FEMALE", java.sql.Date.valueOf("1986-04-17"), 1, 5,
+                "s84", "f84", "h84", "87002000025");
+        clientTestDao.get().insertTestClient(cd);
+        clientTestDao.get().insertTestAddrREG(cd);
+        clientTestDao.get().insertTestPhone(cd);
+
+        ClientDetail cdTest = clientTestDao.get().selectClientByID(id);
         cdTest.name = "Nada";
-        clientRegister.get().editClient(cdTest);
-
-        ClientDetail cdTest1 = clientTestDao.get().selectClientByID(cdTest.id);
-
+        cdTest.mobileNumber1 = "81112223335";
+        cdTest.mobileNumber3 = "55555555";
+        cdTest.factStreet = "test street";
 
         //test
-        assertThat(cdTest).isNotNull();
+        clientRegister.get().editClient(cdTest);
+        ClientDetail cdTest1 = clientTestDao.get().selectClientByID(cdTest.id);
+        System.out.println(cdTest1.mobileNumber1);
+
+        assertThat(cdTest1).isNotNull();
         assertThat(cdTest.id).isEqualTo(cdTest1.id);
+        assertThat(cdTest1.id).isEqualTo(id);
+        assertThat(cdTest1.name).isEqualTo("Nada");
+        assertThat(cdTest1.mobileNumber1).isEqualTo("81112223335");
+        assertThat(cdTest1.mobileNumber3).isEqualTo("55555555");
+        assertThat(cdTest1.factStreet).isEqualTo("test street");
+        assertThat(cdTest1.surname).isEqualTo(cd.surname);
+        assertThat(cdTest1.gender).isEqualTo(cd.gender);
+        assertThat(cdTest1.charm).isEqualTo(cd.charm);
+        assertThat(cdTest1.regStreet).isEqualTo(cd.regStreet);
+        assertThat(cdTest1.regNo).isEqualTo(cd.regNo);
+        assertThat(cdTest1.regFlat).isEqualTo(cd.regFlat);
+        assertThat(cdTest1.mobileNumber1).isNotEqualTo(cd.mobileNumber1);
+    }
+
+    @Test
+    public void checkForDublicateMobileNumber_add_test() {
+        //init
+        deleteAllClients();
+
+        //init data
+        ClientDetail cd = new ClientDetail(0, "Igoreva", "Natazha",
+                "FEMALE", java.sql.Date.valueOf("1986-04-17"), 1, 5,
+                "s84", "f84", "h84", "87002000025");
+        cd.mobileNumber2 = "87002000025";
+        cd.mobileNumber3 = "87002000025";
+
+        //perform
+        clientRegister.get().editClient(cd);
+
+        ClientDetail test = clientTestDao.get().selectClientByName("Natazha");
+
+        //test
+        assertThat(test).isNotNull();
+        assertThat(test.mobileNumber2).isNull();
+        assertThat(test.mobileNumber3).isNull();
+        assertThat(test.mobileNumber1).isEqualTo("87002000025");
+    }
+
+    @Test
+    public void checkForDublicateMobileNumber_edit_test() {
+        deleteAllClients();
+
+        //init data
+        int id = RND.plusInt(1000000);
+        ClientDetail cd = new ClientDetail(id, "Igoreva", "Natazha",
+                "FEMALE", java.sql.Date.valueOf("1986-04-17"), 1, 5,
+                "s84", "f84", "h84", "87002000025");
+        clientTestDao.get().insertTestClient(cd);
+        clientTestDao.get().insertTestAddrREG(cd);
+        clientTestDao.get().insertTestPhone(cd);
+
+        ClientDetail cdTest = clientTestDao.get().selectClientByID(id);
+
+        cdTest.mobileNumber2 = "22";
+        cdTest.mobileNumber3 = "22";
+        cdTest.factStreet = "test street";
+
+        //test
+        clientRegister.get().editClient(cdTest);
+        ClientDetail cdTest1 = clientTestDao.get().selectClientByID(cdTest.id);
+        System.out.println(cdTest1.mobileNumber1);
+
+        assertThat(cdTest1).isNotNull();
+        assertThat(cdTest.id).isEqualTo(cdTest1.id);
+        assertThat(cdTest1.id).isEqualTo(id);
+        assertThat(cdTest1.mobileNumber2).isEqualTo("22");
+        assertThat(cdTest1.mobileNumber3).isEqualTo(null);
+        assertThat(cdTest1.factStreet).isEqualTo("test street");
     }
 
     private void deleteAllClients() {

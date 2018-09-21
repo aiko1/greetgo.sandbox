@@ -1,7 +1,5 @@
 package kz.greetgo.sandbox.controller.model;
 
-
-
 public class FilterParams {
   public String sortBy;
   public String sortDir;

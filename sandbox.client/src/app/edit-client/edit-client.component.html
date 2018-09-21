@@ -1,0 +1,279 @@
+<p-dialog [modal]="true" [(visible)]="display" [width]="1000" (onHide)="close()" [minWidth]="1000"
+          [minX]="100"
+          [minY]="100" [contentStyle]="{'max-height':'600px'}">
+  <p-header style="font-weight: bold;">
+    {{header}}
+  </p-header>
+
+  <form *ngIf="clientDetail" [formGroup]="clientform" (ngSubmit)="onSubmit()">
+    <div class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid" style="margin: 10px 0px">
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Фамилия *:
+        </div>
+        <div class="ui-grid-col-6">
+          <input type="text" pInputText [pKeyFilter]="symbols" placeholder="Введите фамилию" formControlName="surname"
+                 name="surname" [(ngModel)]="clientDetail.surname"/>
+        </div>
+        <div class="ui-grid-col-4">
+          <p-message severity="error" text="Введите фамилию"
+                     *ngIf="clientform.controls['surname'].invalid&&clientform.controls['surname'].touched"></p-message>
+        </div>
+      </div>
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Имя *:
+        </div>
+        <div class="ui-grid-col-6">
+          <input pInputText type="text" [pKeyFilter]="symbols" placeholder="Введите имя" formControlName="name"
+                 name="name"
+                 [(ngModel)]="clientDetail.name"/>
+        </div>
+        <div class="ui-grid-col-4">
+          <p-message severity="error" text="Введите имя"
+                     *ngIf="clientform.controls['name'].invalid&&clientform.controls['name'].touched"></p-message>
+        </div>
+      </div>
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Отчество:
+        </div>
+        <div class="ui-grid-col-6">
+          <input pInputText type="text" [pKeyFilter]="symbols" placeholder="Введите отчество"
+                 formControlName="patronymic"
+                 name="patronymic" [(ngModel)]="clientDetail.patronymic"/>
+        </div>
+      </div>
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Пол *:
+        </div>
+        <div class="ui-grid-col-6">
+          <p-radioButton type="radio" class="ui-g-12" name="gender" value="Мужской" label="Мужской"
+                         formControlName="gender"
+                         [(ngModel)]="clientDetail.gender"></p-radioButton>
+          <p-radioButton type="radio" class="ui-g-12" name="gender" value="Женский" label="Женский"
+                         formControlName="gender"
+                         [(ngModel)]="clientDetail.gender"></p-radioButton>
+        </div>
+        <div class="ui-grid-col-4">
+          <p-message severity="error" text="Выберите пол"
+                     *ngIf="clientform.controls['gender'].invalid&&clientform.controls['gender'].touched"></p-message>
+        </div>
+      </div>
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Дата рождения *:
+        </div>
+        <div class="ui-grid-col-6">
+          <!--<p-inputMask mask="99/99/9999" formControlName="bithDate" name="birthDate"-->
+          <!--[(ngModel)]="clientDetail.birthDate"-->
+          <!--placeholder="dd/mm/yyyy" slotChar="dd/mm/yyyy"></p-inputMask>-->
+          <p-calendar
+            [monthNavigator]="true" [yearNavigator]="true"
+            yearRange="1918:2000"
+            formControlName="bithDate" name="birthDate" [(ngModel)]="clientDetail.birthDate"
+            [readonlyInput]="true"
+            dateFormat="dd/mm/yy"
+            placeholder="Введите дату рождения"
+            [showIcon]="true" (onSelect)="showDate()">
+          </p-calendar>
+        </div>
+        <div class="ui-grid-col-4">
+          <p-message severity="error" text="Введите дату рождения"
+                     *ngIf="clientform.controls['bithDate'].invalid&&clientform.controls['bithDate'].touched"></p-message>
+        </div>
+      </div>
+
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Характер *:
+        </div>
+        <div class="ui-grid-col-6">
+          <p-dropdown [options]="charms" [(ngModel)]="clientDetail.charm" name="charm"
+                      formControlName="charm"
+                      placeholder="Выберите характер"></p-dropdown>
+        </div>
+        <div class="ui-grid-col-4">
+          <p-message severity="error" text="Выберите характер"
+                     *ngIf="clientform.controls['charm'].invalid&&clientform.controls['charm'].touched"></p-message>
+        </div>
+      </div>
+
+
+      <h4>Адрес проживания (фактический)</h4>
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Улица:
+        </div>
+        <div class="ui-grid-col-6">
+          <input type="text" pInputText [pKeyFilter]="symbols" placeholder="Введите улицу"
+                 formControlName="factStreet"
+                 name="factStreet" [(ngModel)]="clientDetail.factStreet"/>
+        </div>
+      </div>
+
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Дом:
+        </div>
+        <div class="ui-grid-col-6">
+          <input pInputText type="text" pKeyFilter="int" placeholder="Введите номер дома" formControlName="factNo"
+                 name="factNo" [(ngModel)]="clientDetail.factNo"/>
+        </div>
+      </div>
+
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Квартира:
+        </div>
+        <div class="ui-grid-col-6">
+          <input pInputText type="text" pKeyFilter="int" placeholder="Введите номер квартиры"
+                 formControlName="factFlat"
+                 name="factFlat" [(ngModel)]="clientDetail.factFlat"/>
+        </div>
+      </div>
+
+      <h4>Адрес регистрации *</h4>
+
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Улица *:
+        </div>
+        <div class="ui-grid-col-6">
+          <input type="text" pInputText [pKeyFilter]="symbols" placeholder="Введите улицу" formControlName="regStreet"
+                 name="regStreet" [(ngModel)]="clientDetail.regStreet"/>
+        </div>
+        <div class="ui-grid-col-4">
+          <p-message severity="error" text="Введите улицу"
+                     *ngIf="clientform.controls['regStreet'].invalid&&clientform.controls['regStreet'].touched"></p-message>
+        </div>
+      </div>
+
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Дом *:
+        </div>
+        <div class="ui-grid-col-6">
+          <input pInputText type="text" pKeyFilter="int" placeholder="Введите номер дома" formControlName="regNo"
+                 name="regNo" [(ngModel)]="clientDetail.regNo"/>
+        </div>
+        <div class="ui-grid-col-4">
+          <p-message severity="error" text="Введите номер дома"
+                     *ngIf="clientform.controls['regNo'].invalid&&clientform.controls['regNo'].touched"></p-message>
+        </div>
+      </div>
+
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Квартира *:
+        </div>
+        <div class="ui-grid-col-6">
+          <input pInputText type="text" pKeyFilter="int" placeholder="Введите номер квартиры"
+                 formControlName="regFlat"
+                 name="regFlat" [(ngModel)]="clientDetail.regFlat"/>
+        </div>
+        <div class="ui-grid-col-4">
+          <p-message severity="error" text="Введите номер квартиры"
+                     *ngIf="clientform.controls['regFlat'].invalid&&clientform.controls['regFlat'].touched"></p-message>
+        </div>
+      </div>
+
+      <h4>Телефоны (один мобильный обязателен)</h4>
+
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Домашний:
+        </div>
+        <div class="ui-grid-col-6">
+          <p-inputMask mask="+7-(272)-999-99-99" placeholder="+7-(272)-xxx-xx-xx" formControlName="homePhoneNumber"
+                       name="homePhoneNumber" [(ngModel)]="clientDetail.homePhoneNumber"></p-inputMask>
+        </div>
+      </div>
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Рабочий:
+        </div>
+        <div class="ui-grid-col-6">
+          <p-inputMask mask="+7-(272)-999-99-99" placeholder="+7-(272)-xxx-xx-xx" formControlName="workPhoneNumber"
+                       name="workPhoneNumber" [(ngModel)]="clientDetail.workPhoneNumber"></p-inputMask>
+        </div>
+      </div>
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Мобильный1 *:
+        </div>
+        <div class="ui-grid-col-6">
+          <p-inputMask minLength="11" minlength="11" mask="+7-(799)-999-99-99" placeholder="+7-(7xx)-xxx-xx-xx" formControlName="mobileNumber1"
+                       name="mobileNumber1" [(ngModel)]="clientDetail.mobileNumber1"></p-inputMask>
+        </div>
+        <div class="ui-grid-col-4">
+          <!--<p-message severity="error" text="Введите номер телефона"-->
+                     <!--*ngIf="clientform.controls['mobileNumber1'].invalid&&"></p-message>-->
+
+          <!--<p-message severity="error"-->
+                     <!--[text]="clientform.controls['mobileNumber1'].errors['required'] ? 'Введите номер телефона' : clientform.controls['mobileNumber1'].errors['minLength'] ?-->
+                     <!--'Введите корректный номер телефона' : ''"-->
+                     <!--*ngIf="clientform.controls['mobileNumber1'].invalid&&clientform.controls['mobileNumber1'].dirty"></p-message>-->
+
+          <p-message severity="error"
+                     text=
+                     'Введите корректный номер телефона'
+                     *ngIf="clientform.controls['mobileNumber1'].errors['minLength']"></p-message>
+        </div>
+      </div>
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Мобильный2:
+        </div>
+        <div class="ui-grid-col-6">
+          <p-inputMask mask="+7-(799)-999-99-99" placeholder="+7-(7xx)-xxx-xx-xx" formControlName="mobileNumber2"
+                       name="mobileNumber2" [(ngModel)]="clientDetail.mobileNumber2"></p-inputMask>
+        </div>
+      </div>
+
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-2">
+          Мобильный3:
+        </div>
+        <div class="ui-grid-col-6">
+          <p-inputMask mask="+7-(799)-999-99-99" placeholder="+7-(7xx)-xxx-xx-xx" formControlName="mobileNumber3"
+                       name="mobileNumber3" [(ngModel)]="clientDetail.mobileNumber3"></p-inputMask>
+        </div>
+      </div>
+    </div>
+
+  </form>
+
+  <p-footer>
+
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-2"></div>
+      <div class="ui-grid-col-6">
+        <p-button type="submit" pTooltip="Заполните все поля отмеченные *"
+                  [tooltipDisabled]="(clientform.valid&&!EDITEMODE)||(clientform.invalid&&EDITEMODE)"
+                  label="Сохранить" [disabled]="!(clientform.valid&&clientform.dirty&&clientform.controls['mobileNumber1'].valid)" (onClick)="saveClient()"
+                  icon="pi pi-check"></p-button>
+        <p-button label="Отмена" (onClick)="cancel()"></p-button>
+      </div>
+      <div class="ui-grid-col-4"></div>
+    </div>
+
+  </p-footer>
+</p-dialog>
