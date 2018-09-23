@@ -7,6 +7,8 @@ import kz.greetgo.sandbox.register.test.util.ParentTestNg;
 import kz.greetgo.util.RND;
 import org.testng.annotations.Test;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,10 +23,10 @@ public class ClientRegisterImplTest extends ParentTestNg {
     List<ClientRecord> clients;
 
     @Test
-    public void getClientList_simple_record() {
+    public void getClientList_simple_record() throws ParseException {
         deleteAllClients();
 
-        ClientRecord record = init(RND.plusInt(1000000), RND.str(10), RND.str(10));
+        ClientDetail record = init(RND.plusInt(1000000), RND.str(10), RND.str(10));
 
         params.filter = "";
         params.filterCol = "";
@@ -35,16 +37,62 @@ public class ClientRegisterImplTest extends ParentTestNg {
         assertThat(clients).isNotNull();
         assertThat(clients).hasSize(1);
         assertThat(clients.get(0).id).isEqualTo(record.id);
-        assertThat(clients.get(0).fio).isEqualTo(record.fio);
+        assertThat(clients.get(0).fio).isEqualTo(record.surname + " " + record.name);
     }
 
     @Test
-    public void getClientList_filter() {
+    public void getClientRecords_charm_test() throws ParseException {
         deleteAllClients();
 
-        ClientRecord record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
-        ClientRecord record2 = init(RND.plusInt(1000000), "Petrov", "Ivan");
-        ClientRecord record3 = init(RND.plusInt(1000000), "Petrov", "Petr");
+        ClientDetail cd = new ClientDetail(0, "Ivanov", "Petr", "MALE", formatDate("31.01.1993"), 1, "sensitive", "RegStreet",
+                "RegHouse", "regFlat", "8-777-555-55-55");
+
+        clientRegister.get().editClient(cd);
+
+        params.filter = "";
+        params.filterCol = "";
+        params.sortBy = "";
+        params.sortDir = "";
+        clients = clientRegister.get().getClients(params);
+
+        assertThat(clients).isNotNull();
+        assertThat(clients).hasSize(1);
+        assertThat(clients.get(0).charm).isEqualTo("sensitive");
+    }
+
+    @Test
+    public void getClientRecords_age_compute_test() throws ParseException {
+        deleteAllClients();
+
+        ClientDetail cd1 = new ClientDetail(0, "Ivanov", "Petr", "MALE", formatDate("31.01.1993"), 1, "sensitive", "RegStreet",
+                "RegHouse", "regFlat", "8-777-555-55-55");
+
+        clientRegister.get().editClient(cd1);
+
+        ClientDetail cd2 = new ClientDetail(0, "Kim", "Petr", "MALE", formatDate("31.09.1998"), 1, "sensitive", "RegStreet",
+                "RegHouse", "regFlat", "8-777-555-55-55");
+
+        clientRegister.get().editClient(cd2);
+
+        params.filter = "";
+        params.filterCol = "";
+        params.sortBy = SortBy.SURNAME.toString();
+        params.sortDir = SortDir.ASC.toString();
+        clients = clientRegister.get().getClients(params);
+
+        assertThat(clients).isNotNull();
+        assertThat(clients).hasSize(2);
+        assertThat(clients.get(0).age).isEqualTo(25);
+        assertThat(clients.get(1).age).isEqualTo(19);
+    }
+
+    @Test
+    public void getClientList_filter() throws ParseException {
+        deleteAllClients();
+
+        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
+        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "Ivan");
+        ClientDetail record3 = init(RND.plusInt(1000000), "Kim", "Petr");
 
         params.filterCol = FilterBy.NAME.toString();
         params.filter = "iv";
@@ -54,23 +102,23 @@ public class ClientRegisterImplTest extends ParentTestNg {
 
         assertThat(clients).isNotNull();
         assertThat(clients).hasSize(2);
-        assertThat(clients.get(0).fio).isEqualTo(record1.fio);
-        assertThat(clients.get(1).fio).isEqualTo(record2.fio);
+        assertThat(clients.get(0).name).isEqualTo(record1.name);
+        assertThat(clients.get(1).name).isEqualTo(record2.name);
         assertThat(clients.get(0).surname).isNotEqualTo(record3.surname);
         assertThat(clients.get(1).surname).isNotEqualTo(record3.surname);
         assertThat(Objects.equals((clients.get(1)), record2));
     }
 
     @Test
-    public void getClientList_sort_asc() {
+    public void getClientList_sort_asc() throws ParseException {
         deleteAllClients();
 
-        ClientRecord record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
-        ClientRecord record2 = init(RND.plusInt(1000000), "Petrov", "Ivan");
-        ClientRecord record3 = init(RND.plusInt(1000000), "Coi", "Petr");
-        ClientRecord record4 = init(RND.plusInt(1000000), "Anutin", "Petr");
-        ClientRecord record5 = init(RND.plusInt(1000000), "Li", "Petr");
-        ClientRecord record6 = init(RND.plusInt(1000000), "Kim", "Petr");
+        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
+        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "Ivan");
+        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "Petr");
+        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");
+        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "Petr");
+        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "Petr");
 
         params.filterCol = "";
         params.filter = "";
@@ -80,20 +128,20 @@ public class ClientRegisterImplTest extends ParentTestNg {
 
         assertThat(clients).isNotNull();
         assertThat(clients).hasSize(6);
-        assertThat(clients.get(0).fio).isEqualTo(record4.fio);
-        assertThat(clients.get(5).fio).isEqualTo(record2.fio);
+        assertThat(clients.get(0).fio).isEqualTo(record4.surname + " " + record4.name);
+        assertThat(clients.get(5).fio).isEqualTo(record2.surname + " " + record2.name);
     }
 
     @Test
-    public void getClientList_sort_desc() {
+    public void getClientList_sort_desc() throws ParseException {
         deleteAllClients();
 
-        ClientRecord record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
-        ClientRecord record2 = init(RND.plusInt(1000000), "Petrov", "A");
-        ClientRecord record3 = init(RND.plusInt(1000000), "Coi", "B");
-        ClientRecord record4 = init(RND.plusInt(1000000), "Anutin", "Petr");
-        ClientRecord record5 = init(RND.plusInt(1000000), "Li", "C");
-        ClientRecord record6 = init(RND.plusInt(1000000), "Kim", "D");
+        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
+        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");
+        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");
+        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");
+        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
+        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");
 
         params.filterCol = "";
         params.filter = "";
@@ -103,20 +151,20 @@ public class ClientRegisterImplTest extends ParentTestNg {
 
         assertThat(clients).isNotNull();
         assertThat(clients).hasSize(6);
-        assertThat(clients.get(0).fio).isEqualTo(record4.fio);
-        assertThat(clients.get(5).fio).isEqualTo(record2.fio);
+        assertThat(clients.get(0).fio).isEqualTo(record4.surname + " " + record4.name);
+        assertThat(clients.get(5).fio).isEqualTo(record2.surname + " " + record2.name);
     }
 
     @Test
-    public void getClientList_sort_filter() {
+    public void getClientList_sort_filter() throws ParseException {
         deleteAllClients();
 
-        ClientRecord record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
-        ClientRecord record2 = init(RND.plusInt(1000000), "Petrov", "A");
-        ClientRecord record3 = init(RND.plusInt(1000000), "Coi", "B");
-        ClientRecord record4 = init(RND.plusInt(1000000), "Petrova", "Petr");
-        ClientRecord record5 = init(RND.plusInt(1000000), "Li", "C");
-        ClientRecord record6 = init(RND.plusInt(1000000), "Kim", "D");
+        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
+        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");
+        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");
+        ClientDetail record4 = init(RND.plusInt(1000000), "Petrova", "Petr");
+        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
+        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");
 
         params.filterCol = FilterBy.SURNAME.toString();
         params.filter = "p";
@@ -126,20 +174,20 @@ public class ClientRegisterImplTest extends ParentTestNg {
 
         assertThat(clients).isNotNull();
         assertThat(clients).hasSize(2);
-        assertThat(clients.get(0).fio).isEqualTo(record2.fio);
-        assertThat(clients.get(1).fio).isEqualTo(record4.fio);
+        assertThat(clients.get(0).fio).isEqualTo(record2.surname + " " + record2.name);
+        assertThat(clients.get(1).fio).isEqualTo(record4.surname + " " + record4.name);
     }
 
     @Test
-    public void getClientList_sort_filter_desc() {
+    public void getClientList_sort_filter_desc() throws ParseException {
         deleteAllClients();
 
-        ClientRecord record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
-        ClientRecord record2 = init(RND.plusInt(1000000), "Petrov", "A");
-        ClientRecord record3 = init(RND.plusInt(1000000), "Coi", "B");
-        ClientRecord record4 = init(RND.plusInt(1000000), "Petrova", "AA");
-        ClientRecord record5 = init(RND.plusInt(1000000), "Li", "C");
-        ClientRecord record6 = init(RND.plusInt(1000000), "Kim", "AAA");
+        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
+        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");
+        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");
+        ClientDetail record4 = init(RND.plusInt(1000000), "Petrova", "AA");
+        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
+        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "AAA");
 
         params.filterCol = FilterBy.NAME.toString();
         params.filter = "a";
@@ -149,23 +197,23 @@ public class ClientRegisterImplTest extends ParentTestNg {
 
         assertThat(clients).isNotNull();
         assertThat(clients).hasSize(3);
-        assertThat(clients.get(0).fio).isEqualTo(record4.fio);
-        assertThat(clients.get(1).fio).isEqualTo(record2.fio);
-        assertThat(clients.get(2).fio).isEqualTo(record6.fio);
+        assertThat(clients.get(0).fio).isEqualTo(record4.surname + " " + record4.name);
+        assertThat(clients.get(1).fio).isEqualTo(record2.surname + " " + record2.name);
+        assertThat(clients.get(2).fio).isEqualTo(record6.surname + " " + record6.name);
     }
 
     @Test
-    public void deleteClient_test() {
+    public void deleteClient_test() throws ParseException {
         deleteAllClients();
 
-        ClientRecord record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
-        ClientRecord record2 = init(RND.plusInt(1000000), "Petrov", "A");
+        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
+        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");
         //
-        ClientRecord record3 = init(RND.plusInt(1000000), "Coi", "B");
+        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");
         //
-        ClientRecord record4 = init(RND.plusInt(1000000), "Anutin", "Petr");
-        ClientRecord record5 = init(RND.plusInt(1000000), "Li", "C");
-        ClientRecord record6 = init(RND.plusInt(1000000), "Kim", "D");
+        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");
+        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
+        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");
 
         clientRegister.get().deleteClient(record3.id);
         params.filterCol = "";
@@ -176,20 +224,21 @@ public class ClientRegisterImplTest extends ParentTestNg {
 
         assertThat(clients).isNotNull();
         assertThat(clients).hasSize(5);
-        assertThat(clients.get(0).fio).isNotEqualTo(record3.fio);
-        assertThat(clients.get(1).fio).isNotEqualTo(record3.fio);
-        assertThat(clients.get(2).fio).isNotEqualTo(record3.fio);
-        assertThat(clients.get(3).fio).isNotEqualTo(record3.fio);
-        assertThat(clients.get(4).fio).isNotEqualTo(record3.fio);
+        assertThat(clients.get(0).fio).isNotEqualTo(record3.surname + " " + record3.name);
+        assertThat(clients.get(1).fio).isNotEqualTo(record3.surname + " " + record3.name);
+        assertThat(clients.get(2).fio).isNotEqualTo(record3.surname + " " + record3.name);
+        assertThat(clients.get(3).fio).isNotEqualTo(record3.surname + " " + record3.name);
+        assertThat(clients.get(4).fio).isNotEqualTo(record3.surname + " " + record3.name);
     }
 
     @Test
-    public void addClient_test() {
+    public void addClient_test() throws ParseException {
         deleteAllClients();
         //init data
 
-        ClientDetail cd = new ClientDetail(0, "Ivanov", "Petr", "MALE", java.sql.Date.valueOf("1993-01-31"), 1, 5, "RegStreet",
+        ClientDetail cd = new ClientDetail(0, "Ivanov", "Petr", "MALE", formatDate("31.01.1993"), 1, "sensitive", "RegStreet",
                 "RegHouse", "regFlat", "8-777-555-55-55");
+//        clientTestDao.get().updateClientField(id, "charm", "(select id from charm where name='" + charm + "')");
         cd.mobileNumber3 = "4";
 
         //call testing method
@@ -198,6 +247,7 @@ public class ClientRegisterImplTest extends ParentTestNg {
         //get from test dao
         ClientDetail cdTest = clientTestDao.get().selectClientByName("Petr");
         System.out.println(cdTest.mobileNumber1);
+        System.out.println(cdTest.birthDate);
 
         //test
         assertThat(cdTest).isNotNull();
@@ -208,15 +258,16 @@ public class ClientRegisterImplTest extends ParentTestNg {
     }
 
     @Test
-    public void editClient_test() {
+    public void editClient_test() throws ParseException {
         deleteAllClients();
 
         //init data
         int id = RND.plusInt(1000000);
         ClientDetail cd = new ClientDetail(id, "Igoreva", "Natazha",
-                "FEMALE", java.sql.Date.valueOf("1986-04-17"), 1, 5,
+                "FEMALE", formatDate("17.04.1986"), 1, "sensitive",
                 "s84", "f84", "h84", "87002000025");
-        clientTestDao.get().insertTestClient(cd);
+        int c = clientTestDao.get().selectCharmIdByName(cd.charm);
+        clientTestDao.get().insertTestClient(cd, c);
         clientTestDao.get().insertTestAddrREG(cd);
         clientTestDao.get().insertTestPhone(cd);
 
@@ -230,6 +281,7 @@ public class ClientRegisterImplTest extends ParentTestNg {
         clientRegister.get().editClient(cdTest);
         ClientDetail cdTest1 = clientTestDao.get().selectClientByID(cdTest.id);
         System.out.println(cdTest1.mobileNumber1);
+        System.out.println(cdTest1.birthDate);
 
         assertThat(cdTest1).isNotNull();
         assertThat(cdTest.id).isEqualTo(cdTest1.id);
@@ -254,7 +306,7 @@ public class ClientRegisterImplTest extends ParentTestNg {
 
         //init data
         ClientDetail cd = new ClientDetail(0, "Igoreva", "Natazha",
-                "FEMALE", java.sql.Date.valueOf("1986-04-17"), 1, 5,
+                "FEMALE", java.sql.Date.valueOf("1986-04-17"), 1, "sensitive",
                 "s84", "f84", "h84", "87002000025");
         cd.mobileNumber2 = "87002000025";
         cd.mobileNumber3 = "87002000025";
@@ -278,9 +330,10 @@ public class ClientRegisterImplTest extends ParentTestNg {
         //init data
         int id = RND.plusInt(1000000);
         ClientDetail cd = new ClientDetail(id, "Igoreva", "Natazha",
-                "FEMALE", java.sql.Date.valueOf("1986-04-17"), 1, 5,
+                "FEMALE", java.sql.Date.valueOf("1986-04-17"), 1, "sensitive",
                 "s84", "f84", "h84", "87002000025");
-        clientTestDao.get().insertTestClient(cd);
+        int c = clientTestDao.get().selectCharmIdByName(cd.charm);
+        clientTestDao.get().insertTestClient(cd, c);
         clientTestDao.get().insertTestAddrREG(cd);
         clientTestDao.get().insertTestPhone(cd);
 
@@ -307,14 +360,24 @@ public class ClientRegisterImplTest extends ParentTestNg {
         clientTestDao.get().deleteAllClients();
     }
 
-    private ClientRecord init(int id, String surname, String name) {
-        ClientRecord record = new ClientRecord();
-        record.fio = surname + " " + name;
-        record.id = id;
-        record.name = name;
-        record.surname = surname;
-        clientTestDao.get().insertNotFullClient(record.id, surname, name, 1);
-        return record;
+    private ClientDetail init(int id, String surname, String name) throws ParseException {
+
+        ClientDetail cd = new ClientDetail(id, surname, name,
+                "FEMALE", formatDate("17.04.1986"), 1, "sensitive",
+                "s84", "f84", "h84", "87002000025");
+        int c = clientTestDao.get().selectCharmIdByName(cd.charm);
+        clientTestDao.get().insertTestClient(cd, c);
+        clientTestDao.get().insertTestAddrREG(cd);
+        clientTestDao.get().insertTestPhone(cd);
+
+        return cd;
+    }
+
+    java.sql.Date formatDate(String birthDate) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        java.util.Date date = sdf.parse(birthDate);
+        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+        return sqlDate;
     }
 
 }

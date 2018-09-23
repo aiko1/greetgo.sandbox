@@ -7,7 +7,8 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 public interface ClientDao {
-    @Select("select id, surname, name, patronymic, gender, birth_date as birthDate, actual, charm,\n" +
+    @Select("select id, surname, name, patronymic, gender, birth_date as birthDate, actual,\n" +
+            "(select name from charm where id=c.charm) as charm,\n" +
             "(select street from client_addr where client=a.client and type='FACT') as factStreet,\n" +
             "(select house from client_addr where client=a.client and type='FACT') as factNo,\n" +
             "(select flat from client_addr where client=a.client and type='FACT') as factFlat,\n" +
@@ -23,7 +24,8 @@ public interface ClientDao {
             "where c.id=#{id} and c.actual=1 limit 1")
     ClientDetail selectClientByID(@Param("id") int id);
 
-    @Select("select id, surname, name, patronymic, gender, birth_date as birthDate, actual, charm,\n" +
+    @Select("select id, surname, name, patronymic, gender, birth_date as birthDate, actual,\n" +
+            "(select name from charm where id=c.charm) as charm,\n" +
             "(select street from client_addr where client=a.client and type='FACT') as factStreet,\n" +
             "(select house from client_addr where client=a.client and type='FACT') as factNo,\n" +
             "(select flat from client_addr where client=a.client and type='FACT') as factFlat,\n" +
@@ -42,11 +44,15 @@ public interface ClientDao {
     @Select("update client set actual=0 where id=#{id}")
     void deleteClientByID(@Param("id") int id);
 
+    @Select("select id from charm where name=#{name}")
+    int selectCharmIdByName(@Param("name") String name);
+
     @Insert("insert into client (id, surname, name, gender, birth_date, actual, charm) " +
             "values (#{id}, #{cd.surname}, #{cd.name}, #{cd.gender}, " +
-            "#{cd.birthDate}, #{cd.actual}, #{cd.charm})")
-//charm: (select id from charm where name=#{cd.charm})
-    void insertIntoClient(@Param("id") int id, @Param("cd") ClientDetail cd);
+            "#{cd.birthDate}, #{cd.actual}, #{charm})")
+    void insertIntoClient(@Param("id") int id,
+                          @Param("cd") ClientDetail cd,
+                          @Param("charm") int charm);
 
     @Update("update client set ${fieldName} = #{fieldValue} where id = #{id}")
     void updateClientField(@Param("id") int id,

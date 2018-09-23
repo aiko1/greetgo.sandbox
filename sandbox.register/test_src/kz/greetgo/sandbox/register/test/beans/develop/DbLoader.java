@@ -19,7 +19,6 @@ import java.util.Date;
 public class DbLoader {
     final Logger logger = Logger.getLogger(getClass());
 
-
     public BeanGetter<AuthTestDao> authTestDao;
     public BeanGetter<ClientTestDao> clientTestDao;
     public BeanGetter<IdGenerator> idGenerator;
@@ -97,31 +96,39 @@ public class DbLoader {
         clientTestDao.get().insertCharm(12, "sensitive");
     }
 
-
-    private void load_client_list() {
+    private void load_client_list() throws ParseException {
         //load client list
-        loadTestClient(1, "Kim", "Igor", "MALE", "1993-11-12", 1, 2, "s1", "h1", "f1", "87758852542");
-        loadTestClient(2, "Ivanov", "Alexey", "MALE", ("1995-11-05"), 1, 1, "s2", "h2", "f2", "85245626966");
-        loadTestClient(3, "Coi", "Vika", "FEMALE", ("1992-11-02"), 1, 5, "s3", "h3", "f3", "87002006644");
-        loadTestClient(4, "Li", "Andrey", "MALE", ("1995-10-12"), 1, 12, "s4", "f4", "h4", "87002003021");
-        loadTestClient(5, "Mihailova", "Nadezhda", "FEMALE", ("1995-01-10"), 1, 9, "s5", "f5", "h5", "87002003022");
-        loadTestClient(6, "Nikulin", "Yuriy", "MALE", ("1997-07-19"), 1, 5, "s6", "f6", "h6", "87002003023");
-        loadTestClient(7, "Ahmetov", "Ahmet", "MALE", ("1982-09-05"), 1, 3, "s7", "f7", "h7", "87002003024");
-        loadTestClient(8, "Igoreva", "Natazha", "FEMALE", ("1986-04-17"), 1, 5, "s84", "f84", "h84", "87002000025");
-        loadTestClient(9, "Nikitin", "Alex", "MALE", ("1991-08-06"), 1, 2, "s49", "f94", "h94", "87002003026");
-        loadTestClient(10, "Medvedeva", "Tanya", "FEMALE", ("1994-01-11"), 1, 4, "s41", "f41", "h14", "87002003027");
-        loadTestClient(11, "Iureva", "Viktoria", "FEMALE", ("1998-06-18"), 1, 8, "s24", "f24", "h24", "87020030028");
-        loadTestClient(12, "Li", "Dmitriy", "MALE", ("1994-08-25"), 1, 1, "s34", "f34", "h34", "87002003029");
-        loadTestClient(13, "Kim", "Kristina", "FEMALE", ("1990-04-16"), 1, 10, "s54", "f54", "h54", "87002030020");
-        loadTestClient(14, "Romanov", "Sasha", "MALE", ("1997-03-17"), 1, 11, "s64", "f64", "h46", "87002030051");
-        loadTestClient(15, "Romanova", "Kim", "FEMALE", ("1991-12-11"), 1, 2, "s74", "f74", "h74", "87002003055");
+        loadTestClient(1, "Kim", "Igor", "MALE", "11.12.1993", 1, "polite", "s1", "h1", "f1", "87758852542");
+        loadTestClient(2, "Ivanov", "Alexey", "MALE", ("05.11.1995"), 1, "sociable", "s2", "h2", "f2", "85245626966");
+        loadTestClient(3, "Coi", "Vika", "FEMALE", ("11.02.1992"), 1, "ambitious", "s3", "h3", "f3", "87002006644");
+        loadTestClient(4, "Li", "Andrey", "MALE", ("10.11.1995"), 1, "sensitive", "s4", "f4", "h4", "87002003021");
+        loadTestClient(5, "Mihailova", "Nadezhda", "FEMALE", ("01.10.1995"), 1, "reliable", "s5", "f5", "h5", "87002003022");
+        loadTestClient(6, "Nikulin", "Yuriy", "MALE", ("19.07.1997"), 1, "ambitious", "s6", "f6", "h6", "87002003023");
+        loadTestClient(7, "Ahmetov", "Ahmet", "MALE", ("05.09.1982"), 1, "quiet", "s7", "f7", "h7", "87002003024");
+        loadTestClient(8, "Igoreva", "Natazha", "FEMALE", ("17.04.1986"), 1, "ambitious", "s84", "f84", "h84", "87002000025");
+        loadTestClient(9, "Nikitin", "Alex", "MALE", ("08.06.1991"), 1, "polite", "s49", "f94", "h94", "87002003026");
+        loadTestClient(10, "Medvedeva", "Tanya", "FEMALE", ("11.01.1994"), 1, "aggressive", "s41", "f41", "h14", "87002003027");
+        loadTestClient(11, "Iureva", "Viktoria", "FEMALE", ("18.06.1998"), 1, "daring", "s24", "f24", "h24", "87020030028");
+        loadTestClient(12, "Li", "Dmitriy", "MALE", ("25.08.1994"), 1, "sociable", "s34", "f34", "h34", "87002003029");
+        loadTestClient(13, "Kim", "Kristina", "FEMALE", ("16.04.1990"), 1, "artistic", "s54", "f54", "h54", "87002030020");
+        loadTestClient(14, "Romanov", "Sasha", "MALE", ("17.03.1997"), 1, "patient", "s64", "f64", "h46", "87002030051");
+        loadTestClient(15, "Romanova", "Kim", "FEMALE", ("11.12.1991"), 1, "polite", "s74", "f74", "h74", "87002003055");
     }
 
     void loadTestClient(int id, String surname, String name, String gender, String birthDate, int actual,
-                   int charm, String regStreet, String regNo, String regFlat, String mobileNumber1) {
-        ClientDetail cd = new ClientDetail(id, surname, name, gender, java.sql.Date.valueOf(birthDate), actual, charm, regStreet, regNo, regFlat, mobileNumber1);
-        clientTestDao.get().insertTestClient(cd);
+                        String charm, String regStreet, String regNo, String regFlat, String mobileNumber1) throws ParseException {
+        ClientDetail cd = new ClientDetail(id, surname, name, gender, formatDate(birthDate), actual, charm, regStreet, regNo, regFlat, mobileNumber1);
+        int c = clientTestDao.get().selectCharmIdByName(charm);
+        clientTestDao.get().insertTestClient(cd, c);
         clientTestDao.get().insertTestAddrREG(cd);
         clientTestDao.get().insertTestPhone(cd);
+        clientTestDao.get().insertDefaultAccount(id, id);
+    }
+
+    java.sql.Date formatDate(String birthDate) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        java.util.Date date = sdf.parse(birthDate);
+        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+        return sqlDate;
     }
 }

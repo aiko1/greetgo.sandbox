@@ -7,6 +7,7 @@ import kz.greetgo.mvc.annotations.on_methods.ControllerPrefix;
 import kz.greetgo.mvc.annotations.on_methods.OnGet;
 import kz.greetgo.mvc.annotations.on_methods.OnPost;
 import kz.greetgo.mvc.interfaces.TunnelCookies;
+import kz.greetgo.sandbox.controller.model.ClientDetail;
 import kz.greetgo.sandbox.controller.model.ClientRecord;
 import kz.greetgo.sandbox.controller.model.FilterParams;
 import kz.greetgo.sandbox.controller.model.PersonDisplay;
@@ -28,12 +29,19 @@ import static kz.greetgo.sandbox.controller.util.SandboxViews.G_SESSION;
 @ControllerPrefix("/client")
 public class ClientController implements Controller {
 
-  public BeanGetter<ClientRegister> clientRegister;
+    public BeanGetter<ClientRegister> clientRegister;
 
-  @ToJson
-  @PublicAccess
-  @OnGet("/list")
-  public List<ClientRecord> getList(@ParamsTo FilterParams params) {
-    return clientRegister.get().getClients(params);
-  }
+    @ToJson
+    @PublicAccess
+    @OnGet("/list")
+    public List<ClientRecord> getList(@ParamsTo FilterParams params) {
+        return clientRegister.get().getClients(params);
+    }
+
+    @ToJson
+    @PublicAccess
+    @OnGet("/clientDetails/{id}")
+    public ClientDetail getDetails(@ParPath("id") int id) {
+        return clientRegister.get().getDetails(id);
+    }
 }

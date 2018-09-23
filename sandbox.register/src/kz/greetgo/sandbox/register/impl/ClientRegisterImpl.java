@@ -10,9 +10,11 @@ import kz.greetgo.sandbox.register.dao.ClientDao;
 import kz.greetgo.sandbox.register.util.JdbcSandbox;
 import kz.greetgo.util.RND;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @Bean
@@ -26,7 +28,13 @@ public class ClientRegisterImpl implements ClientRegister {
 
         //JDBC
         return jdbc.get().execute(con -> {
-            StringBuilder sql = new StringBuilder("Select * from client where actual = 1");
+            StringBuilder sql = new StringBuilder("select c.id, c.surname, c.name, patronymic, birth_date,\n" +
+                    "(select name from charm where id=c.charm) as charm,\n" +
+                    "(select sum(money) from client_account where client=c.id) as totalBalance,\n" +
+                    "(select max(money) from client_account where client=c.id) as maxBalance,\n" +
+                    "(select min(money) from client_account where client=c.id) as minBalance \n" +
+                    "from client c left join client_account a on c.id = a.client\n" +
+                    "where c.actual=1");
 
             if (!params.filter.isEmpty() && !params.filterCol.isEmpty()) {
                 sql.append(" and lower(" + params.filterCol + ") like '" + params.filter + "%'");
@@ -40,14 +48,53 @@ public class ClientRegisterImpl implements ClientRegister {
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         ClientRecord record = new ClientRecord();
-                        record.fio = rs.getString("surname") + " " + rs.getString("name");
+
                         record.id = rs.getInt("id");
+                        record.fio = rs.getString("surname") + " " + rs.getString("name");
+                        if (rs.getString("patronymic") != null) {
+                            record.fio += " " + rs.getString("patronymic");
+                        }
+                        record.surname = rs.getString("surname");
+                        record.name = rs.getString("name");
+                        record.patronymic = rs.getString("patronymic");
+                        record.charm = rs.getString("charm");
+                        record.age = computeAge(rs.getDate("birth_date"));
+                        record.totalBalance = rs.getFloat("totalBalance");
+                        record.maxBalance = rs.getFloat("maxBalance");
+                        record.minBalance = rs.getFloat("minBalance");
+
                         clientList.add(record);
                     }
                     return clientList;
                 }
             }
         });
+    }
+
+    private int computeAge(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int bYear = cal.get(Calendar.YEAR);
+        int bMonth = cal.get(Calendar.MONTH) + 1;
+        int bDay = cal.get(Calendar.DAY_OF_MONTH);
+
+        Calendar calCurrent = Calendar.getInstance();
+        int cYear = calCurrent.get(Calendar.YEAR);
+        int cMonth = calCurrent.get(Calendar.MONTH) + 1;
+        int cDay = calCurrent.get(Calendar.DAY_OF_MONTH);
+
+        int age = cYear - bYear; // date = 21.03.1995     current = 23.09.2018
+
+        if (bMonth > cMonth) {   // date = 17.10.1995     current = 23.09.2018
+            age -= 1;
+        }
+
+        if (bMonth == cMonth) {
+            if (bDay > cDay) {   // date = 28.09.1995     current = 23.09.2018
+                age -= 1;
+            }
+        }
+        return age;
     }
 
     @Override
@@ -64,6 +111,11 @@ public class ClientRegisterImpl implements ClientRegister {
         }
     }
 
+    @Override
+    public ClientDetail getDetails(int id) {
+        return clientDao.get().selectClientByID(id);
+    }
+
     private void editExistedClient(ClientDetail cd) {
         clientDao.get().updateClientField(cd.id, "surname", cd.surname);
         clientDao.get().updateClientField(cd.id, "name", cd.name);
@@ -75,7 +127,9 @@ public class ClientRegisterImpl implements ClientRegister {
 
         clientDao.get().updateClientField(cd.id, "birth_date", cd.birthDate);
 
-        clientDao.get().updateClientField(cd.id, "charm", cd.charm);
+        int charm = clientDao.get().selectCharmIdByName(cd.charm);
+
+        clientDao.get().updateClientField(cd.id, "charm", charm);
 
         updateFactAddress(cd);
 
@@ -127,7 +181,8 @@ public class ClientRegisterImpl implements ClientRegister {
         System.out.println("adding... ");
         int id = RND.plusInt(1000000);
 
-        clientDao.get().insertIntoClient(id, cd);
+        int charm = clientDao.get().selectCharmIdByName(cd.charm);
+        clientDao.get().insertIntoClient(id, cd, charm);
         cd.id = id;
 
         if (cd.patronymic != null)

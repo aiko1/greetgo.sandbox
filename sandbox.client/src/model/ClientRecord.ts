@@ -4,7 +4,7 @@ export class ClientRecord {
   name: string;
   patronymic: string;
   fio: string;
-  charm: string; //int
+  charm: string;
   age: number;
   totalBalance: number;
   maxBalance: number;

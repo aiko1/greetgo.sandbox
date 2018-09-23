@@ -12,6 +12,7 @@ import {ClientRecord} from "../../model/ClientRecord";
 })
 
 export class ClientListComponent implements OnInit {
+  today: number = Date.now();
   clients: ClientRecord[];
   datasource: ClientRecord[];
   client_detail_id: number;
@@ -29,6 +30,7 @@ export class ClientListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.client_detail_id = 1;
     this.cols = [
       {field: 'fio', header: 'ФИО'},
       {field: 'charm', header: 'Характер'},
@@ -74,6 +76,8 @@ export class ClientListComponent implements OnInit {
 
   onSelect(c: ClientRecord) {
     this.selectedClient = c;
+    this.client_detail_id = c.id;
+    // console.log(this.client_detail_id);
   }
 
   edit(id: number) {

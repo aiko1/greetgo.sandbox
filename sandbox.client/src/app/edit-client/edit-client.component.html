@@ -125,8 +125,9 @@
           Дом:
         </div>
         <div class="ui-grid-col-6">
-          <input pInputText type="text" pKeyFilter="int" placeholder="Введите номер дома" formControlName="factNo"
+          <input pInputText type="text" placeholder="Введите номер дома" formControlName="factNo"
                  name="factNo" [(ngModel)]="clientDetail.factNo"/>
+          <!--pKeyFilter="int"-->
         </div>
       </div>
 
@@ -136,7 +137,7 @@
           Квартира:
         </div>
         <div class="ui-grid-col-6">
-          <input pInputText type="text" pKeyFilter="int" placeholder="Введите номер квартиры"
+          <input pInputText type="text" placeholder="Введите номер квартиры"
                  formControlName="factFlat"
                  name="factFlat" [(ngModel)]="clientDetail.factFlat"/>
         </div>
@@ -165,7 +166,7 @@
           Дом *:
         </div>
         <div class="ui-grid-col-6">
-          <input pInputText type="text" pKeyFilter="int" placeholder="Введите номер дома" formControlName="regNo"
+          <input pInputText type="text" placeholder="Введите номер дома" formControlName="regNo"
                  name="regNo" [(ngModel)]="clientDetail.regNo"/>
         </div>
         <div class="ui-grid-col-4">
@@ -180,8 +181,7 @@
           Квартира *:
         </div>
         <div class="ui-grid-col-6">
-          <input pInputText type="text" pKeyFilter="int" placeholder="Введите номер квартиры"
-                 formControlName="regFlat"
+          <input pInputText type="text" placeholder="Введите номер квартиры" formControlName="regFlat"
                  name="regFlat" [(ngModel)]="clientDetail.regFlat"/>
         </div>
         <div class="ui-grid-col-4">
@@ -218,22 +218,12 @@
           Мобильный1 *:
         </div>
         <div class="ui-grid-col-6">
-          <p-inputMask minLength="11" minlength="11" mask="+7-(799)-999-99-99" placeholder="+7-(7xx)-xxx-xx-xx" formControlName="mobileNumber1"
+          <p-inputMask mask="+7-(799)-999-99-99" placeholder="+7-(7xx)-xxx-xx-xx" formControlName="mobileNumber1"
                        name="mobileNumber1" [(ngModel)]="clientDetail.mobileNumber1"></p-inputMask>
         </div>
         <div class="ui-grid-col-4">
-          <!--<p-message severity="error" text="Введите номер телефона"-->
-                     <!--*ngIf="clientform.controls['mobileNumber1'].invalid&&"></p-message>-->
-
-          <!--<p-message severity="error"-->
-                     <!--[text]="clientform.controls['mobileNumber1'].errors['required'] ? 'Введите номер телефона' : clientform.controls['mobileNumber1'].errors['minLength'] ?-->
-                     <!--'Введите корректный номер телефона' : ''"-->
-                     <!--*ngIf="clientform.controls['mobileNumber1'].invalid&&clientform.controls['mobileNumber1'].dirty"></p-message>-->
-
-          <p-message severity="error"
-                     text=
-                     'Введите корректный номер телефона'
-                     *ngIf="clientform.controls['mobileNumber1'].errors['minLength']"></p-message>
+          <p-message severity="error" text="Введите номер телефона"
+                     *ngIf="clientform.controls['mobileNumber1'].invalid&&clientform.controls['mobileNumber1'].touched"></p-message>
         </div>
       </div>
 
@@ -268,7 +258,9 @@
       <div class="ui-grid-col-6">
         <p-button type="submit" pTooltip="Заполните все поля отмеченные *"
                   [tooltipDisabled]="(clientform.valid&&!EDITEMODE)||(clientform.invalid&&EDITEMODE)"
-                  label="Сохранить" [disabled]="!(clientform.valid&&clientform.dirty&&clientform.controls['mobileNumber1'].valid)" (onClick)="saveClient()"
+                  label="Сохранить"
+                  [disabled]="!(clientform.valid&&clientform.dirty&&clientform.controls['mobileNumber1'].valid)"
+                  (onClick)="saveClient()"
                   icon="pi pi-check"></p-button>
         <p-button label="Отмена" (onClick)="cancel()"></p-button>
       </div>

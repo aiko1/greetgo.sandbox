@@ -58,7 +58,8 @@
         client int REFERENCES client(id),
         money real default 0.0,
         number varchar(100),
-        registered_at TimeStamp      )
+        registered_at TimeStamp
+      )
     ]]></sql>
   </changeSet>
 

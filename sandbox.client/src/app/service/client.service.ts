@@ -35,7 +35,7 @@ export class ClientService {
   }
 
   getClientDetail(id: number): Observable<ClientDetail> {
-    return this._http.get<ClientDetail>(this.url + '/clientDetails/' + id, httpOptions).pipe(
+    return this._http.get<ClientDetail>(this.url + '/client/clientDetails/' + id, httpOptions).pipe(
       catchError(this.handleError<ClientDetail>('get client detail'))
     );
   }

@@ -22,6 +22,7 @@ export class EditClientComponent implements OnInit {
   @Output() onChanged = new EventEmitter<boolean>();
 
   constructor(private _service: ClientService, private fb: FormBuilder) {
+    console.log('de');
     this.charms = [
       {label: 'спокойный', value: 'спокойный'},
       {label: 'активный', value: 'активный'},
@@ -35,6 +36,10 @@ export class EditClientComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.client_detail_id);
+
+    this.setValidators();
+
     if (this.client_detail_id) {
       this._service.getClientDetail(this.client_detail_id).subscribe((content) => {
         this.clientDetail = content;
@@ -43,7 +48,8 @@ export class EditClientComponent implements OnInit {
     } else {
       this.clientDetail = new ClientDetail();
     }
-    this.setValidators();
+
+    console.log(this.display);
   }
 
   setValidators() {
@@ -60,16 +66,17 @@ export class EditClientComponent implements OnInit {
       'regStreet': new FormControl('', Validators.required),
       'regNo': new FormControl('', Validators.required),
       'regFlat': new FormControl('', Validators.required),
-      'homePhoneNumber': new FormControl('', Validators.minLength(11)),
-      'workPhoneNumber': new FormControl('', Validators.minLength(11)),
-      'mobileNumber1': new FormControl('', Validators.compose([Validators.required])),
-      'mobileNumber2': new FormControl('', Validators.minLength(11)),
-      'mobileNumber3': new FormControl('', Validators.minLength(11))
+      'homePhoneNumber': new FormControl(''),
+      'workPhoneNumber': new FormControl(''),
+      'mobileNumber1': new FormControl('', Validators.required),
+      'mobileNumber2': new FormControl(''),
+      'mobileNumber3': new FormControl('')
     });
   }
 
   showDate() {
     console.log(this.clientDetail.birthDate);
+    console.log(this.client_detail_id);
   }
 
   cancel() {

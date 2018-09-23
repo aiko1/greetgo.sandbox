@@ -6,8 +6,8 @@ export class ClientDetail {
   fio: string;
   gender: string;
   birthDate: string;
-  actual: string;
-  charm: string; //int
+  // actual: number;
+  charm: string;
   factStreet: string;
   factNo: string;
   factFlat: string;
