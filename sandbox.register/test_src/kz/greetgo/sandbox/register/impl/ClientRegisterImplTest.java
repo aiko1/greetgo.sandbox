@@ -28,14 +28,13 @@ public class ClientRegisterImplTest extends ParentTestNg {
 
         ClientDetail record = init(RND.plusInt(1000000), RND.str(10), RND.str(10));
 
-        params.filter = "";
-        params.filterCol = "";
-        params.sortBy = "";
-        params.sortDir = "";
+        params = new FilterParams();
         clients = clientRegister.get().getClients(params);
+        System.out.println(clients.size());
 
         assertThat(clients).isNotNull();
         assertThat(clients).hasSize(1);
+        assertThat(clients.size()).isEqualTo(1);
         assertThat(clients.get(0).id).isEqualTo(record.id);
         assertThat(clients.get(0).fio).isEqualTo(record.surname + " " + record.name);
     }
@@ -49,10 +48,7 @@ public class ClientRegisterImplTest extends ParentTestNg {
 
         clientRegister.get().editClient(cd);
 
-        params.filter = "";
-        params.filterCol = "";
-        params.sortBy = "";
-        params.sortDir = "";
+        params = new FilterParams();
         clients = clientRegister.get().getClients(params);
 
         assertThat(clients).isNotNull();
@@ -74,8 +70,7 @@ public class ClientRegisterImplTest extends ParentTestNg {
 
         clientRegister.get().editClient(cd2);
 
-        params.filter = "";
-        params.filterCol = "";
+        params = new FilterParams();
         params.sortBy = SortBy.SURNAME.toString();
         params.sortDir = SortDir.ASC.toString();
         clients = clientRegister.get().getClients(params);
@@ -94,10 +89,9 @@ public class ClientRegisterImplTest extends ParentTestNg {
         ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "Ivan");
         ClientDetail record3 = init(RND.plusInt(1000000), "Kim", "Petr");
 
+        params = new FilterParams();
         params.filterCol = FilterBy.NAME.toString();
-        params.filter = "iv";
-        params.sortBy = "";
-        params.sortDir = "";
+        params.filter = "Iv";
         clients = clientRegister.get().getClients(params);
 
         assertThat(clients).isNotNull();
@@ -120,8 +114,7 @@ public class ClientRegisterImplTest extends ParentTestNg {
         ClientDetail record5 = init(RND.plusInt(1000000), "Li", "Petr");
         ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "Petr");
 
-        params.filterCol = "";
-        params.filter = "";
+        params = new FilterParams();
         params.sortBy = SortBy.SURNAME.toString();
         params.sortDir = SortDir.ASC.toString();
         clients = clientRegister.get().getClients(params);
@@ -143,8 +136,7 @@ public class ClientRegisterImplTest extends ParentTestNg {
         ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
         ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");
 
-        params.filterCol = "";
-        params.filter = "";
+        params = new FilterParams();
         params.sortBy = SortBy.NAME.toString();
         params.sortDir = SortDir.DESC.toString();
         clients = clientRegister.get().getClients(params);
@@ -166,8 +158,9 @@ public class ClientRegisterImplTest extends ParentTestNg {
         ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
         ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");
 
+        params = new FilterParams();
         params.filterCol = FilterBy.SURNAME.toString();
-        params.filter = "p";
+        params.filter = "P";
         params.sortBy = SortBy.NAME.toString();
         params.sortDir = SortDir.ASC.toString();
         clients = clientRegister.get().getClients(params);
@@ -189,8 +182,9 @@ public class ClientRegisterImplTest extends ParentTestNg {
         ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
         ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "AAA");
 
+        params = new FilterParams();
         params.filterCol = FilterBy.NAME.toString();
-        params.filter = "a";
+        params.filter = "A";
         params.sortBy = SortBy.SURNAME.toString();
         params.sortDir = SortDir.DESC.toString();
         clients = clientRegister.get().getClients(params);
@@ -200,6 +194,114 @@ public class ClientRegisterImplTest extends ParentTestNg {
         assertThat(clients.get(0).fio).isEqualTo(record4.surname + " " + record4.name);
         assertThat(clients.get(1).fio).isEqualTo(record2.surname + " " + record2.name);
         assertThat(clients.get(2).fio).isEqualTo(record6.surname + " " + record6.name);
+    }
+
+    @Test
+    public void limit_test() throws ParseException {
+        deleteAllClients();
+
+        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
+        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");
+        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");
+        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");
+        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
+        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");
+
+        params = new FilterParams();
+        params.limit = 2;
+        clients = clientRegister.get().getClients(params);
+
+        assertThat(clients).isNotNull();
+        assertThat(clients).hasSize(2);
+    }
+
+    @Test
+    public void offset_test() throws ParseException {
+        deleteAllClients();
+
+        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
+        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");
+        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");
+        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");
+        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
+        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");
+
+        params = new FilterParams();
+        params.offset = 2;
+        clients = clientRegister.get().getClients(params);
+
+        assertThat(clients).isNotNull();
+        assertThat(clients).hasSize(4);
+    }
+
+    @Test
+    public void limit_offset_test() throws ParseException {
+        deleteAllClients();
+
+        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
+        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");
+        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");
+        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");
+        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
+        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");
+
+        params = new FilterParams();
+        params.limit = 3;
+        params.offset = 4;
+        clients = clientRegister.get().getClients(params);
+
+        assertThat(clients).isNotNull();
+        assertThat(clients).hasSize(2);
+    }
+
+    @Test
+    public void sort_limit_offset_test() throws ParseException {
+        deleteAllClients();
+
+        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");//3
+        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");//6
+        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");//2
+        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");//1
+        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");//5
+        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");//4
+
+        params = new FilterParams();
+        params.sortBy = SortBy.SURNAME.toString();
+        params.sortDir = SortDir.ASC.toString();
+        params.limit = 3;
+        params.offset = 2;//3-5
+        clients = clientRegister.get().getClients(params);
+
+        assertThat(clients).isNotNull();
+        assertThat(clients).hasSize(3);
+        assertThat(clients.get(0).id).isEqualTo(record1.id);
+        assertThat(clients.get(1).name).isEqualTo(record6.name);
+        assertThat(clients.get(2).surname).isEqualTo(record5.surname);
+    }
+
+    @Test
+    public void sort_filter_limit_offset_test() throws ParseException {
+        deleteAllClients();
+
+        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");//4
+        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");//1
+        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");//5
+        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");//6
+        ClientDetail record5 = init(RND.plusInt(1000000), "Ka", "C");//3
+        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");//2
+
+        params = new FilterParams();
+        params.sortBy = SortBy.SURNAME.toString();
+        params.sortDir = SortDir.DESC.toString();
+        params.filterCol = FilterBy.SURNAME.toString();
+        params.filter = "K";
+        params.limit = 3;
+        params.offset = 1;//3
+        clients = clientRegister.get().getClients(params);
+
+        assertThat(clients).isNotNull();
+        assertThat(clients).hasSize(1);
+        assertThat(clients.get(0).id).isEqualTo(record5.id);
     }
 
     @Test
@@ -216,10 +318,7 @@ public class ClientRegisterImplTest extends ParentTestNg {
         ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");
 
         clientRegister.get().deleteClient(record3.id);
-        params.filterCol = "";
-        params.filter = "";
-        params.sortBy = "";
-        params.sortDir = "";
+        params = new FilterParams();
         clients = clientRegister.get().getClients(params);
 
         assertThat(clients).isNotNull();

@@ -3,7 +3,7 @@ package kz.greetgo.sandbox.controller.model;
 public enum FilterBy {
     NAME("name"),
     SURNAME("surname"),
-    BYPATRONYMIC("patronymic");
+    PATRONYMIC("patronymic");
 
     private final String text;
 

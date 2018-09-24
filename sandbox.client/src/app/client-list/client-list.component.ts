@@ -13,7 +13,6 @@ import {ClientRecord} from "../../model/ClientRecord";
 
 export class ClientListComponent implements OnInit {
   clients: ClientRecord[];
-  datasource: ClientRecord[];
   client_detail_id: number;
   display: boolean = false;
   selectedClient: ClientRecord;
@@ -24,6 +23,9 @@ export class ClientListComponent implements OnInit {
   totalRecords: number;
   loading: boolean;
   private filterParams: FilterParams = new FilterParams();
+  searchSurname: string;
+  searchName: string;
+  searchPat: string;
 
   constructor(private clientService: ClientService, private confirmationService: ConfirmationService) {
   }
@@ -40,24 +42,19 @@ export class ClientListComponent implements OnInit {
     ];
 
     //filter cols
-    this.nameCols = [
-      {field: 'surname'},
-      {field: 'name'},
-      {field: 'patronymic'}
-    ];
+    this.nameCols = ['surname', 'name', 'patronymic'];
 
-    this.getClientRecords();
-    this.loading = true;
+    //load client records
+    // this.filterParams.limit = 5;
+    // this.filterParams.offset = 10;
+    // this.getClientRecords(this.filterParams);
+
+    this.loading = false;
   }
 
   loadLazy(event: LazyLoadEvent) {
-    this.loading = true;
-    setTimeout(() => {
-      if (this.datasource) {
-        this.clients = this.datasource.slice(event.first, (event.first + event.rows));
-        this.loading = false;
-      }
-    }, 1000);
+    this.filterParams.limit = 5;
+    this.getClientRecords(null);
   }
 
   //output from child listens display value changing
@@ -65,23 +62,25 @@ export class ClientListComponent implements OnInit {
     this.display = disabled;
   }
 
-  getClientRecords(): void {
-    this.filterParams.sortBy = 'surname';
-    this.filterParams.sortDir = 'ASC';
-    this.filterParams.filter = '';
-    this.filterParams.filterCol = '';
-
-    this.clientService.getClientRecords(this.filterParams).subscribe((content) => {
-      this.datasource = content;
-      this.totalRecords = this.datasource.length;
+  getClientRecords(params): void {
+    this.clientService.getClientRecords(params).subscribe((content) => {
+      this.clients = content;
+      this.totalRecords = this.clients.length;
+      console.log(content);
+      console.log(this.totalRecords);
     });
+  }
+
+  filter(column: string, searchText: string): void {
+    this.filterParams.filterCol = column;
+    this.filterParams.filter = searchText;
+    console.log(this.filterParams.filterCol + ' ' + this.filterParams.filter);
+    this.getClientRecords(this.filterParams);
   }
 
   //on table item selected
   onSelect(c: ClientRecord) {
     this.selectedClient = c;
-    this.client_detail_id = c.id;
-    console.log(this.client_detail_id);
   }
 
   edit(id: number) {
@@ -94,8 +93,8 @@ export class ClientListComponent implements OnInit {
   add() {
     this.header = 'Добавление нового клиента';
     this.EDITEMODE = false;
-    this.client_detail_id = 1;
-    this.selectedClient = new ClientRecord();
+    this.client_detail_id = 0;
+    // this.selectedClient = new ClientRecord();
     this.display = true;
   }
 

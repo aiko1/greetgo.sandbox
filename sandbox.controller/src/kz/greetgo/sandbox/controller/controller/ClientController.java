@@ -7,10 +7,7 @@ import kz.greetgo.mvc.annotations.on_methods.ControllerPrefix;
 import kz.greetgo.mvc.annotations.on_methods.OnGet;
 import kz.greetgo.mvc.annotations.on_methods.OnPost;
 import kz.greetgo.mvc.interfaces.TunnelCookies;
-import kz.greetgo.sandbox.controller.model.ClientDetail;
-import kz.greetgo.sandbox.controller.model.ClientRecord;
-import kz.greetgo.sandbox.controller.model.FilterParams;
-import kz.greetgo.sandbox.controller.model.PersonDisplay;
+import kz.greetgo.sandbox.controller.model.*;
 import kz.greetgo.sandbox.controller.register.AuthRegister;
 import kz.greetgo.sandbox.controller.register.ClientRegister;
 import kz.greetgo.sandbox.controller.security.PublicAccess;
@@ -36,6 +33,13 @@ public class ClientController implements Controller {
     @OnGet("/list")
     public List<ClientRecord> getList(@ParamsTo FilterParams params) {
         return clientRegister.get().getClients(params);
+    }
+
+    @ToJson
+    @PublicAccess
+    @OnGet("/charms")
+    public List<Charm> getCharmsList() {
+        return clientRegister.get().getCharmsList();
     }
 
     @ToJson

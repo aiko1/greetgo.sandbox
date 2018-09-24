@@ -1,19 +1,24 @@
-<!--<p>Or if you prefer, {{today | date:'dd.MM.yyyy'}}</p>-->
-
 <p-button label="Добавить + " class="add-btn" (onClick)="add()"></p-button>
 <p-table #dt [value]="clients" [columns]="cols" selectionMode="single" [paginator]="true" [rows]="10"
          [totalRecords]="totalRecords" [lazy]="true" (onLazyLoad)="loadLazy($event)" [loading]="loading">
   <ng-template pTemplate="header" let-columns>
     <tr>
-      <th *ngFor="let col of nameCols" [ngSwitch]="col.field" colspan="2">
-        <input *ngSwitchCase="'surname'" type="text" pInputText placeholder="Поиск по фамилии"
-               (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" style="width:100%">
+      <th colspan="2">
+        <input type="text" pInputText [(ngModel)]="searchSurname"
+               placeholder="Поиск по фамилии" style="width:85%; margin-right: 5px;">
+        <p-button (click)="filter(nameCols[0], searchSurname)" icon="pi pi-search"></p-button>
+      </th>
 
-        <input *ngSwitchCase="'name'" type="text" pInputText placeholder="Поиск по имени"
-               (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" style="width:100%">
+      <th colspan="2">
+        <input type="text" pInputText [(ngModel)]="searchName"
+               placeholder="Поиск по имени" style="width:85%; margin-right: 5px;">
+        <p-button (click)="filter(nameCols[1], searchName)" icon="pi pi-search"></p-button>
+      </th>
 
-        <input *ngSwitchCase="'patronymic'" type="text" pInputText placeholder="Поиск по отчеству"
-               (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" style="width:100%">
+      <th colspan="2">
+        <input type="text" pInputText [(ngModel)]="searchPat"
+               placeholder="Поиск по отчеству" style="width:85%; margin-right: 5px;">
+        <p-button (click)="filter(nameCols[2], searchPat)" icon="pi pi-search"></p-button>
       </th>
     </tr>
     <tr>

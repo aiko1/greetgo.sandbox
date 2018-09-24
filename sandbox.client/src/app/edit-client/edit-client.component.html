@@ -52,10 +52,10 @@
           Пол *:
         </div>
         <div class="ui-grid-col-6">
-          <p-radioButton type="radio" class="ui-g-12" name="gender" value="Мужской" label="Мужской"
+          <p-radioButton type="radio" class="ui-g-12" name="gender" value="MALE" label="MALE"
                          formControlName="gender"
                          [(ngModel)]="clientDetail.gender"></p-radioButton>
-          <p-radioButton type="radio" class="ui-g-12" name="gender" value="Женский" label="Женский"
+          <p-radioButton type="radio" class="ui-g-12" name="gender" value="FEMALE" label="FEMALE"
                          formControlName="gender"
                          [(ngModel)]="clientDetail.gender"></p-radioButton>
         </div>
@@ -76,16 +76,16 @@
           <p-calendar
             [monthNavigator]="true" [yearNavigator]="true"
             yearRange="1918:2000"
-            formControlName="bithDate" name="birthDate" [(ngModel)]="dd"
+            formControlName="birthDate" name="birthDate" [(ngModel)]="clientDetail.birthDate"
             [readonlyInput]="true"
-            dateFormat="dd/mm/yy"
+            dateFormat="dd.mm.yy"
             placeholder="Введите дату рождения"
-            [showIcon]="true" (onSelect)="showDate()">
+            [showIcon]="true">
           </p-calendar>
         </div>
         <div class="ui-grid-col-4">
           <p-message severity="error" text="Введите дату рождения"
-                     *ngIf="clientform.controls['bithDate'].invalid&&clientform.controls['bithDate'].touched"></p-message>
+                     *ngIf="clientform.controls['birthDate'].invalid&&clientform.controls['birthDate'].touched"></p-message>
         </div>
       </div>
 

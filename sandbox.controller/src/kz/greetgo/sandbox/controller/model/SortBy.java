@@ -3,7 +3,7 @@ package kz.greetgo.sandbox.controller.model;
 public enum SortBy {
     NAME("name"),
     SURNAME("surname"),
-    BYPATRONYMIC("patronymic"),
+    PATRONYMIC("patronymic"),
     TOTALBALANCE("totalBalance"),
     MAXBALANCE("maxBalance"),
     MINBALANCE("minBalance");

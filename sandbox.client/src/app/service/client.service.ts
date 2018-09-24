@@ -4,6 +4,7 @@ import {catchError, map, tap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {ClientRecord} from "../../model/ClientRecord";
 import {ClientDetail} from "../../model/ClientDetail";
+import {Charm} from "../../model/Charm";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'}),
@@ -35,8 +36,16 @@ export class ClientService {
   }
 
   getClientDetail(id: number): Observable<ClientDetail> {
+    httpOptions.params = null;
     return this._http.get<ClientDetail>(this.url + '/client/clientDetails/' + id, httpOptions).pipe(
       catchError(this.handleError<ClientDetail>('get client detail'))
+    );
+  }
+
+  getCharmList(): Observable<Charm[]> {
+    httpOptions.params = null;
+    return this._http.get<Charm[]>(this.url + '/client/charms', httpOptions).pipe(
+      catchError(this.handleError<Charm[]>('get client detail'))
     );
   }
 

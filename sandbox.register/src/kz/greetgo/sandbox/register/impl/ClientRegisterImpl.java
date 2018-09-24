@@ -2,6 +2,7 @@ package kz.greetgo.sandbox.register.impl;
 
 import kz.greetgo.depinject.core.Bean;
 import kz.greetgo.depinject.core.BeanGetter;
+import kz.greetgo.sandbox.controller.model.Charm;
 import kz.greetgo.sandbox.controller.model.ClientDetail;
 import kz.greetgo.sandbox.controller.model.ClientRecord;
 import kz.greetgo.sandbox.controller.model.FilterParams;
@@ -36,15 +37,41 @@ public class ClientRegisterImpl implements ClientRegister {
                     "from client c left join client_account a on c.id = a.client\n" +
                     "where c.actual=1");
 
-            if (!params.filter.isEmpty() && !params.filterCol.isEmpty()) {
-                sql.append(" and lower(" + params.filterCol + ") like '" + params.filter + "%'");
+            if (params.filter != null && params.filterCol != null) {
+                sql.append(" and " + params.filterCol + " like ?");
             }
 
-            if (!params.sortBy.isEmpty() && !params.sortDir.isEmpty()) {
-                sql.append(" ORDER BY " + params.sortBy + " " + params.sortDir);
+            if (params.sortBy != null && params.sortDir != null) {
+                sql.append(String.format(" ORDER BY %s %s ", params.sortBy, params.sortDir));
             }
+
+            if (params.limit != 0) {
+                sql.append(" limit " + params.limit);
+            }
+
+            if (params.offset != 0) {
+                sql.append(" OFFSET " + params.offset);
+            }
+
             List<ClientRecord> clientList = new ArrayList<>();
             try (PreparedStatement ps = con.prepareStatement(sql.toString())) {
+                if (params.filter != null && params.filterCol != null)
+                    ps.setString(1, params.filter + "%");
+//
+//                if (params.filterCol != null && params.filterCol == "name" && params.filter != null)
+//                    ps.setString(2, params.filter + "%");
+//
+//                if (params.filterCol != null && params.filterCol == "patronymic" && params.filter != null)
+//                    ps.setString(3, params.filter + "%");
+
+//                if (params.limit != 0)
+//                    ps.setInt(4, params.limit);
+//
+//                if (params.offset != 0)
+//                    ps.setInt(5, params.offset);
+
+                System.out.println(ps);
+
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         ClientRecord record = new ClientRecord();
@@ -114,6 +141,30 @@ public class ClientRegisterImpl implements ClientRegister {
     @Override
     public ClientDetail getDetails(int id) {
         return clientDao.get().selectClientByID(id);
+    }
+
+    @Override
+    public List<Charm> getCharmsList() {
+        return jdbc.get().execute(con -> {
+            String sql = "select * from charm";
+
+            List<Charm> charms = new ArrayList<>();
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        Charm c = new Charm();
+                        c.id = rs.getInt("id");
+                        c.value = rs.getString("name");
+                        c.label = rs.getString("name");
+                        c.description = rs.getString("description");
+                        c.energy = rs.getFloat("energy");
+
+                        charms.add(c);
+                    }
+                    return charms;
+                }
+            }
+        });
     }
 
     private void editExistedClient(ClientDetail cd) {
