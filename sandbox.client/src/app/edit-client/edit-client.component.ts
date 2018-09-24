@@ -1,8 +1,8 @@
-import {Component, Input, OnInit, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ɵConsole} from '@angular/core';
 import {ClientDetail} from "../../model/ClientDetail";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {SelectItem} from "primeng/api";
 import {ClientService} from "../service/client.service";
+import {Charm} from "../../model/Charm";
 
 @Component({
   selector: 'app-edit-client',
@@ -13,26 +13,33 @@ export class EditClientComponent implements OnInit {
   @Input() client_detail_id: number;
   @Input() display: boolean = false;
   @Input() header: string;
+
+
   @Input() EDITEMODE: boolean = false;
   clientDetail: ClientDetail;
   birthDate: number = Date.now();
-  charms: SelectItem[];
+  charms: Charm[];
   symbols: RegExp = /^[a-zA-Z а-яА-Я]+$/;
   clientform: FormGroup;
   @Output() onChanged = new EventEmitter<boolean>();
 
   constructor(private _service: ClientService, private fb: FormBuilder) {
-    console.log('de');
     this.charms = [
-      {label: 'спокойный', value: 'спокойный'},
-      {label: 'активный', value: 'активный'},
-      {label: 'аккуратный', value: 'аккуратный'},
-      {label: 'артистичный', value: 'артистичный'},
-      {label: 'бдительный', value: 'бдительный'},
-      {label: 'безобидный', value: 'безобидный'},
-      {label: 'веселый', value: 'веселый'},
-      {label: 'грозный', value: 'грозный'}
+      {id:1, label: 'спокойный', value: 'спокойный'},
+      {id:2, label: 'активный', value: 'активный'},
+      {id:3, label: 'аккуратный', value: 'аккуратный'},
+      {id:4, label: 'артистичный', value: 'артистичный'},
+      {id:5, label: 'бдительный', value: 'бдительный'},
+      {id:6, label: 'безобидный', value: 'безобидный'},
+      {id:7, label: 'веселый', value: 'веселый'},
+      {id:8, label: 'грозный', value: 'грозный'}
     ];
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['header']) {
+      console.log(this.header);
+    }
   }
 
   ngOnInit() {
@@ -49,7 +56,15 @@ export class EditClientComponent implements OnInit {
       this.clientDetail = new ClientDetail();
     }
 
-    console.log(this.display);
+    console.log(this.header);
+  }
+
+  dd: Date;
+
+  //dropdown clicked
+  loadCharmList() {
+    let d = this.dd.getDate();
+    console.log(d + '.' + this.dd.getMonth()+1 + '.' + this.dd.getFullYear());
   }
 
   setValidators() {

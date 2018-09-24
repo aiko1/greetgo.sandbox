@@ -12,7 +12,6 @@ import {ClientRecord} from "../../model/ClientRecord";
 })
 
 export class ClientListComponent implements OnInit {
-  today: number = Date.now();
   clients: ClientRecord[];
   datasource: ClientRecord[];
   client_detail_id: number;
@@ -26,11 +25,11 @@ export class ClientListComponent implements OnInit {
   loading: boolean;
   private filterParams: FilterParams = new FilterParams();
 
-  constructor(private _service: ClientService, private confirmationService: ConfirmationService) {
+  constructor(private clientService: ClientService, private confirmationService: ConfirmationService) {
   }
 
   ngOnInit() {
-    this.client_detail_id = 1;
+    //columns of table
     this.cols = [
       {field: 'fio', header: 'ФИО'},
       {field: 'charm', header: 'Характер'},
@@ -39,11 +38,14 @@ export class ClientListComponent implements OnInit {
       {field: 'maxBalance', header: 'Максимальный остаток'},
       {field: 'minBalance', header: 'Минимальный остаток'}
     ];
+
+    //filter cols
     this.nameCols = [
       {field: 'surname'},
       {field: 'name'},
       {field: 'patronymic'}
     ];
+
     this.getClientRecords();
     this.loading = true;
   }
@@ -58,43 +60,46 @@ export class ClientListComponent implements OnInit {
     }, 1000);
   }
 
+  //output from child listens display value changing
   onChanged(disabled: boolean) {
     this.display = disabled;
   }
 
   getClientRecords(): void {
-    this.filterParams.sortBy = 'name';
+    this.filterParams.sortBy = 'surname';
     this.filterParams.sortDir = 'ASC';
     this.filterParams.filter = '';
     this.filterParams.filterCol = '';
 
-    this._service.getClientRecords(this.filterParams).subscribe((content) => {
+    this.clientService.getClientRecords(this.filterParams).subscribe((content) => {
       this.datasource = content;
       this.totalRecords = this.datasource.length;
     });
   }
 
+  //on table item selected
   onSelect(c: ClientRecord) {
     this.selectedClient = c;
     this.client_detail_id = c.id;
-    // console.log(this.client_detail_id);
+    console.log(this.client_detail_id);
   }
 
   edit(id: number) {
     this.header = 'Редактирование клиента';
-    this.EDITEMODE = true;
     this.client_detail_id = id;
+    this.EDITEMODE = true;
     this.display = true;
   }
 
   add() {
     this.header = 'Добавление нового клиента';
     this.EDITEMODE = false;
-
+    this.client_detail_id = 1;
     this.selectedClient = new ClientRecord();
     this.display = true;
   }
 
+  //confirm for delete
   confirm(id: number) {
     this.confirmationService.confirm({
       message: 'Удалить клиент ' + this.selectedClient.fio + '?',
@@ -110,9 +115,9 @@ export class ClientListComponent implements OnInit {
 
   deleteClient(id: number) {
     this.clients = this.clients.filter(c => c !== this.selectedClient);
-    this._service.deleteClientDetails(id)
+    this.clientService.deleteClientDetails(id)
       .subscribe(() =>
-        this._service.deleteClientRecord(id)
+        this.clientService.deleteClientRecord(id)
           .subscribe());
   }
 }

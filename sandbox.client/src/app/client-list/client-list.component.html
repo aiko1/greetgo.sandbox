@@ -1,5 +1,4 @@
-<p>Or if you prefer, {{today | date:'dd.MM.yyyy'}}</p>
-
+<!--<p>Or if you prefer, {{today | date:'dd.MM.yyyy'}}</p>-->
 
 <p-button label="Добавить + " class="add-btn" (onClick)="add()"></p-button>
 <p-table #dt [value]="clients" [columns]="cols" selectionMode="single" [paginator]="true" [rows]="10"
@@ -45,5 +44,5 @@
 
 <p-confirmDialog></p-confirmDialog>
 
-<app-edit-client (onChanged)="onChanged($event)" [header]="header" [EDITEMODE]="EDITEMODE"
+<app-edit-client *ngIf="header" (onChanged)="onChanged($event)" [header]="header" [EDITEMODE]="EDITEMODE"
                  [client_detail_id]="client_detail_id" [display]="display"></app-edit-client>
