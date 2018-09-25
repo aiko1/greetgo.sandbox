@@ -26,7 +26,6 @@ public class ClientRegisterImpl implements ClientRegister {
 
     @Override
     public List<ClientRecord> getClients(FilterParams params) {
-
         //JDBC
         return jdbc.get().execute(con -> {
             StringBuilder sql = new StringBuilder("select c.id, c.surname, c.name, patronymic, birth_date,\n" +
@@ -130,11 +129,12 @@ public class ClientRegisterImpl implements ClientRegister {
     }
 
     @Override
-    public void editClient(ClientDetail cd) {
+    public ClientDetail editClient(ClientDetail cd) {
+        System.out.println(cd.toString());
         if (cd.id == 0) {
-            addNewClient(cd);
+            return addNewClient(cd);
         } else {
-            editExistedClient(cd);
+            return editExistedClient(cd);
         }
     }
 
@@ -167,7 +167,8 @@ public class ClientRegisterImpl implements ClientRegister {
         });
     }
 
-    private void editExistedClient(ClientDetail cd) {
+    private ClientDetail editExistedClient(ClientDetail cd) {
+        System.out.println("editing ...");
         clientDao.get().updateClientField(cd.id, "surname", cd.surname);
         clientDao.get().updateClientField(cd.id, "name", cd.name);
 
@@ -203,6 +204,7 @@ public class ClientRegisterImpl implements ClientRegister {
 
         checkAndUpdateMobileNumber(cd.id, cd.mobileNumber3, "MOBILE3");
 
+        return clientDao.get().selectClientByID(cd.id);
     }
 
     private void updatePhoneNumber(int id, String phoneNumber, String type) {
@@ -228,7 +230,7 @@ public class ClientRegisterImpl implements ClientRegister {
         }
     }
 
-    private void addNewClient(ClientDetail cd) {
+    private ClientDetail addNewClient(ClientDetail cd) {
         System.out.println("adding... ");
         int id = RND.plusInt(1000000);
 
@@ -255,6 +257,8 @@ public class ClientRegisterImpl implements ClientRegister {
         checkMobileNumber(id, cd.mobileNumber2, "MOBILE2");
 
         checkMobileNumber(id, cd.mobileNumber3, "MOBILE3");
+
+        return clientDao.get().selectClientByID(id);
     }
 
     void checkMobileNumber(int id, String mobileNumber, String type) {

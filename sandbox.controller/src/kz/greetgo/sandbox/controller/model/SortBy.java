@@ -1,9 +1,10 @@
 package kz.greetgo.sandbox.controller.model;
 
 public enum SortBy {
+    CHARM("charm"),
+    FIO("surname"),
     NAME("name"),
-    SURNAME("surname"),
-    PATRONYMIC("patronymic"),
+    AGE("age"),
     TOTALBALANCE("totalBalance"),
     MAXBALANCE("maxBalance"),
     MINBALANCE("minBalance");

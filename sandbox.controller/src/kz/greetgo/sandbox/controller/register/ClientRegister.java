@@ -13,7 +13,7 @@ public interface ClientRegister {
 
     void deleteClient(int id);
 
-    void editClient(ClientDetail cd);
+    ClientDetail editClient(ClientDetail cd);
 
     ClientDetail getDetails(int id);
 

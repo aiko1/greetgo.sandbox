@@ -49,7 +49,7 @@ public interface ClientDao {
 
     @Insert("insert into client (id, surname, name, gender, birth_date, actual, charm) " +
             "values (#{id}, #{cd.surname}, #{cd.name}, #{cd.gender}, " +
-            "#{cd.birthDate}, #{cd.actual}, #{charm})")
+            "#{cd.birthDate}, 1, #{charm})")
     void insertIntoClient(@Param("id") int id,
                           @Param("cd") ClientDetail cd,
                           @Param("charm") int charm);

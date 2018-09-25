@@ -1,10 +1,8 @@
 export enum SortBy {
-  NAME = "name",
-  SURNAME = "surname",
-  PATRONYMIC = "patronymic",
+  FIO = "surname",
+  CHARM = "charm",
+  AGE = "age",
   TOTALBALANCE = "totalBalance",
   MAXBALANCE = "maxBalance",
   MINBALANCE = "minBalance"
 }
-
-

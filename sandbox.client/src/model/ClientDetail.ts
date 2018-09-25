@@ -5,7 +5,7 @@ export class ClientDetail {
   patronymic: string;
   fio: string;
   gender: string;
-  birthDate: string;
+  birthDate: Date;
   // actual: number;
   charm: string;
   factStreet: string;

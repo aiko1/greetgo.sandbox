@@ -1,6 +1,14 @@
 <p-button label="Добавить + " class="add-btn" (onClick)="add()"></p-button>
-<p-table #dt [value]="clients" [columns]="cols" selectionMode="single" [paginator]="true" [rows]="10"
-         [totalRecords]="totalRecords" [lazy]="true" (onLazyLoad)="loadLazy($event)" [loading]="loading">
+<p-table #dt [value]="clients"
+         [columns]="cols"
+         selectionMode="single"
+         [paginator]="true"
+         [rows]="10"
+         [totalRecords]="totalRecords"
+         [lazy]="true"
+         (onLazyLoad)="loadLazy($event)"
+         [loading]="loading"
+         [customSort]="true">
   <ng-template pTemplate="header" let-columns>
     <tr>
       <th colspan="2">
@@ -22,11 +30,15 @@
       </th>
     </tr>
     <tr>
-      <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+      <!--1-->
+      <!--<th [pSortableColumn]="columns[0].field">-->
+        <!--{{columns[0].header}}-->
+        <!--<p-sortIcon [field]="columns[0].field"></p-sortIcon>-->
+      <!--</th>-->
+
+      <th *ngFor="let col of columns" [pSortableColumn]="col.field" (click)="sort(col.field)">
         {{col.header}}
-        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort"
-                    ariaLabelDesc="Activate to sort in descending order"
-                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+        <p-sortIcon [field]="col.field"></p-sortIcon>
       </th>
       <th>Действия</th>
     </tr>
@@ -40,7 +52,7 @@
       <td>
         <p-button [disabled]="rowData!=selectedClient" class="edit-btn" (click)="edit(rowData.id)"
                   label="..."></p-button>
-        <p-button [disabled]="rowData!=selectedClient" class="delete-btn" (click)="confirm(rowData.id)"
+        <p-button [disabled]="rowData!=selectedClient" class="delete-btn" (click)="confirmForDelete(rowData.id)"
                   label="-"></p-button>
       </td>
     </tr>

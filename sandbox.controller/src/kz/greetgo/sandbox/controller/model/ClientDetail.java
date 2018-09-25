@@ -50,4 +50,29 @@ public class ClientDetail {
 
     public ClientDetail() {
     }
+
+    @Override
+    public String toString() {
+        return "ClientDetail{" +
+                "id='" + id + '\'' +
+                ", surname='" + surname + '\'' +
+                ", name='" + name + '\'' +
+                ", patronymic='" + patronymic + '\'' +
+                ", gender='" + gender + '\'' +
+                ", birthDate='" + birthDate + '\'' +
+                ", actual='" + actual + '\'' +
+                ", charm='" + charm + '\'' +
+                ", factStreet='" + factStreet + '\'' +
+                ", factNo='" + factNo + '\'' +
+                ", factFlat='" + factFlat + '\'' +
+                ", regStreet='" + regStreet + '\'' +
+                ", regNo='" + regNo + '\'' +
+                ", regFlat='" + regFlat + '\'' +
+                ", homePhoneNumber='" + homePhoneNumber + '\'' +
+                ", workPhoneNumber='" + workPhoneNumber + '\'' +
+                ", mobileNumber1='" + mobileNumber1 + '\'' +
+                ", mobileNumber2='" + mobileNumber2 + '\'' +
+                ", mobileNumber3='" + mobileNumber3 + '\'' +
+                '}';
+    }
 }

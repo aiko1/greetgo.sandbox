@@ -3,13 +3,13 @@ import {ClientDetail} from "../../model/ClientDetail";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ClientService} from "../service/client.service";
 import {Charm} from "../../model/Charm";
-import {DateFormatPipe} from "../../model/DateFormatPipe";
+
 
 @Component({
   selector: 'app-edit-client',
   templateUrl: './edit-client.component.html',
   styleUrls: ['./edit-client.component.css'],
-  providers: [DateFormatPipe]
+  providers: []
 })
 export class EditClientComponent implements OnInit {
   @Input() client_detail_id: number;
@@ -18,23 +18,15 @@ export class EditClientComponent implements OnInit {
   @Input() EDITEMODE: boolean = false;
 
   clientDetail: ClientDetail;
+  addedClient: ClientDetail;
   charms: Charm[];
   symbols: RegExp = /^[a-zA-Z а-яА-Я]+$/;
   clientform: FormGroup;
 
   @Output() onChanged = new EventEmitter<boolean>();
 
-  constructor(private _service: ClientService, private fb: FormBuilder, private _dateFormatPipe: DateFormatPipe) {
-    // this.charms = [
-    //   {id: 1, label: 'спокойный', value: 'спокойный'},
-    //   {id: 2, label: 'активный', value: 'активный'},
-    //   {id: 3, label: 'аккуратный', value: 'аккуратный'},
-    //   {id: 4, label: 'артистичный', value: 'артистичный'},
-    //   {id: 5, label: 'бдительный', value: 'бдительный'},
-    //   {id: 6, label: 'безобидный', value: 'безобидный'},
-    //   {id: 7, label: 'веселый', value: 'веселый'},
-    //   {id: 8, label: 'грозный', value: 'грозный'}
-    // ];
+  constructor(private _service: ClientService,
+              private fb: FormBuilder) {
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -44,7 +36,6 @@ export class EditClientComponent implements OnInit {
       if (this.client_detail_id != 0) {
         this._service.getClientDetail(this.client_detail_id).subscribe((content) => {
           this.clientDetail = content;
-          this.clientDetail.birthDate = this._dateFormatPipe.transform(content.birthDate);
           console.log(this.clientDetail.birthDate)
         });
       } else {
@@ -87,10 +78,6 @@ export class EditClientComponent implements OnInit {
     });
   }
 
-  showDate() {
-    console.log(this.clientDetail.birthDate);
-  }
-
   cancel() {
     if (this.clientform.dirty) {
       alert('Закрыть без сохранения?');
@@ -106,27 +93,39 @@ export class EditClientComponent implements OnInit {
   }
 
 
-  setClientRecord() {
-    // this.selectedClient.surname = this.clientDetail.surname;
-    // this.selectedClient.name = this.clientDetail.name;
-    // this.selectedClient.patronymic = this.clientDetail.patronymic;
-    // this.clientDetail.fio = this.clientDetail.surname + ' ' + this.clientDetail.name + ' ' + this.clientDetail.patronymic;
-    // this.selectedClient.fio = this.clientDetail.fio;
-    // this.selectedClient.charm = this.clientDetail.charm;
-    // this.selectedClient.age = (new Date()).getFullYear() - (+this.clientDetail.birthDate.slice(6));
-  }
+  // setClientRecord() {
+  // this.selectedClient.surname = this.clientDetail.surname;
+  // this.selectedClient.name = this.clientDetail.name;
+  // this.selectedClient.patronymic = this.clientDetail.patronymic;
+  // this.clientDetail.fio = this.clientDetail.surname + ' ' + this.clientDetail.name + ' ' + this.clientDetail.patronymic;
+  // this.selectedClient.fio = this.clientDetail.fio;
+  // this.selectedClient.charm = this.clientDetail.charm;
+  // this.selectedClient.age = (new Date()).getFullYear() - (+this.clientDetail.birthDate.slice(6));
+  // }
 
   saveClient() {
-    if (this.EDITEMODE) {
-      this.setClientRecord();
 
-      // this._service.updateClientDetail(this.clientDetail)
-      //   .subscribe(() =>
-      //     this._service.updateClientRecord(this.selectedClient)
-      //       .subscribe(() => this.close())
-      //   );
+    // this.clientDetail.birthDate = this._dateForDB.transform(this.clientDetail.birthDate)
+
+    if (this.EDITEMODE) {
+      // this.setClientRecord();
+      this._service.editClient(this.clientDetail)
+        .then(() => this.close());
     } else {
-      this.setClientRecord();
+      // this.setClientRecord();
+      this.clientDetail.id = 0;
+      this._service.editClient(this.clientDetail)
+        .then((c) => {
+          this.addedClient = c;
+          console.log(this.addedClient);
+          this.close();
+        });
+
+      // this._service.addClient(this.clientDetail)
+      //   .subscribe((c) => {
+      //     this.addedClient = c;
+      //     this.close();
+      //   });
 
       // this._service.addClientDetailes(this.clientDetail)
       //   .subscribe(() =>

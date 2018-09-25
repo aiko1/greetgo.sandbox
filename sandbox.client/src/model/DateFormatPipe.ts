@@ -4,8 +4,14 @@ import { DatePipe } from '@angular/common';
 @Pipe({
   name: 'dateFormat'
 })
-export class DateFormatPipe extends DatePipe implements PipeTransform {
+export class DateForUI extends DatePipe implements PipeTransform {
   transform(value: any, args?: any): any {
     return super.transform(value, "dd.MM.yyyy");
   }
 }
+//
+// export class DateForDB extends DatePipe implements PipeTransform {
+//   transform(value: any, args?: any): any {
+//     return super.transform(value, "yyyy-MM-dd");
+//   }
+// }
