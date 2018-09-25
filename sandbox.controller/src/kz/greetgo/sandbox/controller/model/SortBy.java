@@ -4,7 +4,7 @@ public enum SortBy {
     CHARM("charm"),
     FIO("surname"),
     NAME("name"),
-    AGE("age"),
+    AGE("birth_date"),
     TOTALBALANCE("totalBalance"),
     MAXBALANCE("maxBalance"),
     MINBALANCE("minBalance");
