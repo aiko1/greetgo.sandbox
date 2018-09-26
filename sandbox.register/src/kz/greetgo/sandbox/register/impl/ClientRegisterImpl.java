@@ -167,6 +167,42 @@ public class ClientRegisterImpl implements ClientRegister {
         });
     }
 
+    @Override
+    public ClientRecord getAddedClient() {
+        return jdbc.get().execute(con -> {
+            String sql = "select c.id, c.surname, c.name, patronymic, birth_date,\n" +
+                    "(select name from charm where id=c.charm) as charm,\n" +
+                    "(select sum(money) from client_account where client=c.id) as totalBalance,\n" +
+                    "(select max(money) from client_account where client=c.id) as maxBalance,\n" +
+                    "(select min(money) from client_account where client=c.id) as minBalance \n" +
+                    "from client c left join client_account a on c.id = a.client\n" +
+                    "where c.actual=1 and c.id = (select max(id) from client)";
+
+            ClientRecord record = new ClientRecord();
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        record.id = rs.getInt("id");
+                        record.fio = rs.getString("surname") + " " + rs.getString("name");
+                        if (rs.getString("patronymic") != null) {
+                            record.fio += " " + rs.getString("patronymic");
+                        }
+                        record.surname = rs.getString("surname");
+                        record.name = rs.getString("name");
+                        record.patronymic = rs.getString("patronymic");
+                        record.charm = rs.getString("charm");
+                        record.age = computeAge(rs.getDate("birth_date"));
+                        record.totalBalance = rs.getFloat("totalBalance");
+                        record.maxBalance = rs.getFloat("maxBalance");
+                        record.minBalance = rs.getFloat("minBalance");
+                    }
+                    return record;
+                }
+            }
+        });
+    }
+
     private ClientDetail editExistedClient(ClientDetail cd) {
         System.out.println("editing ...");
         clientDao.get().updateClientField(cd.id, "surname", cd.surname);
@@ -232,10 +268,10 @@ public class ClientRegisterImpl implements ClientRegister {
 
     private ClientDetail addNewClient(ClientDetail cd) {
         System.out.println("adding... ");
-        int id = RND.plusInt(1000000);
 
         int charm = clientDao.get().selectCharmIdByName(cd.charm);
-        clientDao.get().insertIntoClient(id, cd, charm);
+        clientDao.get().insertIntoClient(cd, charm);
+        int id = clientDao.get().selectNewClientID();
         cd.id = id;
 
         if (cd.patronymic != null)

@@ -24,6 +24,7 @@ import {TooltipModule} from 'primeng/tooltip';
 import {PaginatorModule} from 'primeng/paginator';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import { EditClientComponent } from './edit-client/edit-client.component';
+import {BlockUIModule} from 'primeng/components/blockui/blockui';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { EditClientComponent } from './edit-client/edit-client.component';
     KeyFilterModule,
     TooltipModule,
     PaginatorModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    BlockUIModule
   ],
   providers: [HttpService, ClientService],
   bootstrap: [AppComponent]

@@ -18,4 +18,6 @@ public interface ClientRegister {
     ClientDetail getDetails(int id);
 
     List<Charm> getCharmsList();
+
+    ClientRecord getAddedClient();
 }

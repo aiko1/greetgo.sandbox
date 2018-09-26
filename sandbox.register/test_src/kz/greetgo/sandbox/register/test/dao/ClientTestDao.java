@@ -7,19 +7,20 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 public interface ClientTestDao {
-    @Insert("insert into charm values (#{id}, #{name})")
-    void insertCharm(@Param("id") int id,
-                     @Param("name") String name);
+    @Insert("insert into charm (name) values (#{name})")
+    void insertCharm(@Param("name") String name);
 
-    @Insert("insert into client_account (id, client) values (#{id}, #{client})")
-    void insertDefaultAccount(@Param("id") int id,
-                              @Param("client") int client);
+    @Insert("insert into client_account (client) values (#{client})")
+    void insertDefaultAccount(@Param("client") int client);
 
     @Select("select id from charm where name=#{name}")
     int selectCharmIdByName(@Param("name") String name);
 
-    @Insert("insert into client (id, surname, name, gender, birth_date, actual, charm) " +
-            "values (#{cd.id}, #{cd.surname}, #{cd.name}, #{cd.gender}, " +
+    @Select("select max(id) from client")
+    int selectNewClientID();
+
+    @Insert("insert into client (surname, name, gender, birth_date, actual, charm) " +
+            "values (#{cd.surname}, #{cd.name}, #{cd.gender}, " +
             "#{cd.birthDate}, #{cd.actual}, #{charm})")
     void insertTestClient(@Param("cd") ClientDetail cd,
                           @Param("charm") int charm);
@@ -37,10 +38,9 @@ public interface ClientTestDao {
             "values (#{cd.id}, 'MOBILE1', #{cd.mobileNumber1})")
     void insertTestPhone(@Param("cd") ClientDetail cd);
 
-    @Insert("insert into client (id, surname, name, actual) " +
-            "values (#{id}, #{surname}, #{name}, #{actual})")
-    void insertNotFullClient(@Param("id") int id,
-                             @Param("surname") String surname,
+    @Insert("insert into client (surname, name, actual) " +
+            "values (#{surname}, #{name}, #{actual})")
+    void insertNotFullClient(@Param("surname") String surname,
                              @Param("name") String name,
                              @Param("actual") int actual
     );

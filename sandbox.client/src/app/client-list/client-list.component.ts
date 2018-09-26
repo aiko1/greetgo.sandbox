@@ -14,13 +14,14 @@ import {SortBy} from "../../model/SortBy";
 })
 
 export class ClientListComponent implements OnInit {
+  static DEFAULT_PAGE_SIZE: number = 10;
   clients: ClientRecord[];
-  datasource: ClientRecord[];
+  addedClients: ClientRecord[];
   client_detail_id: number;
   display: boolean = false;
   selectedClient: ClientRecord;
   header: string;
-  EDITEMODE: boolean = false;
+  EDITEMODE: boolean;
   cols: any[];
   nameCols: any[];
   totalRecords: number;
@@ -33,7 +34,7 @@ export class ClientListComponent implements OnInit {
   //sortMode
   fioASC: boolean = false;
   charmASC: boolean = false;
-  ageASC: boolean = false;
+  ageASC: boolean = true;
   totalBalanceASC: boolean = false;
   maxBalanceASC: boolean = false;
   minBalanceASC: boolean = false;
@@ -44,9 +45,6 @@ export class ClientListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getClientRecords(null);
-    console.log(SortBy.FIO);
-
     //columns of table
     this.cols = [
       {field: 'fio', header: 'ФИО'},
@@ -60,26 +58,22 @@ export class ClientListComponent implements OnInit {
     //filter cols
     this.nameCols = ['surname', 'name', 'patronymic'];
 
-    //load client records
-    // this.filterParams.limit = 5;
-    // this.filterParams.offset = 10;
-    // this.getClientRecords(this.filterParams);
+    //set total records
+    this.getRecordsCount(null);
 
-    // this.filterParams.limit = 15;
     this.loading = true;
-
   }
 
   loadLazy(event: LazyLoadEvent) {
-
     this.loading = true;
+    this.getClientRecords(this.setParams(event));
+  }
 
-    setTimeout(() => {
-      if (this.datasource) {
-        this.clients = this.datasource.slice(event.first, (event.first + event.rows));
-        this.loading = false;
-      }
-    }, 250);
+  //set limit and offset params to load content of page
+  private setParams(event: LazyLoadEvent): FilterParams {
+    this.filterParams.limit = ClientListComponent.DEFAULT_PAGE_SIZE;
+    this.filterParams.offset = event.first;
+    return this.filterParams;
   }
 
   sort(sortBy: string) {
@@ -128,10 +122,9 @@ export class ClientListComponent implements OnInit {
   }
 
   sorting(sortBy: string, sortDir: string) {
-    this.filterParams = new FilterParams();
     this.filterParams.sortBy = sortBy;
     this.filterParams.sortDir = sortDir;
-    console.log('sortBy: ' + this.filterParams.sortBy + ', sortDir: ' + this.filterParams.sortDir)
+    console.log('sortBy: ' + this.filterParams.sortBy + ', sortDir: ' + this.filterParams.sortDir);
     this.getClientRecords(this.filterParams);
   }
 
@@ -140,12 +133,34 @@ export class ClientListComponent implements OnInit {
     this.display = disabled;
   }
 
+  //listen from child to add row on bottom if client added
+  newClientAdded(added: boolean) {
+    if (added) {
+      this.clientService.getAddedClient().subscribe((content) => {
+        this.addedClients = [content];
+      });
+    }
+  }
+
+  clientEdited(edited: boolean) {
+    if (edited) {
+      this.getClientRecords(this.filterParams);
+    }
+  }
+
+  getRecordsCount(params): void {
+    this.clientService.getClientRecords(params).subscribe((content) => {
+      this.totalRecords = content.length;
+      console.log(this.totalRecords);
+    });
+  }
+
   getClientRecords(params): void {
     this.clientService.getClientRecords(params).subscribe((content) => {
-      this.datasource = content;
-      this.totalRecords = this.datasource.length;
+      this.clients = content;
       console.log(content);
-      console.log(this.totalRecords);
+      this.addedClients = [];
+      this.loading = false;
     });
   }
 
@@ -162,6 +177,7 @@ export class ClientListComponent implements OnInit {
   }
 
   edit(id: number) {
+    this.addedClients = [];
     this.header = 'Редактирование клиента';
     this.client_detail_id = id;
     this.EDITEMODE = true;
@@ -169,6 +185,7 @@ export class ClientListComponent implements OnInit {
   }
 
   add() {
+    this.addedClients = [];
     this.header = 'Добавление нового клиента';
     this.EDITEMODE = false;
     this.client_detail_id = 0;
@@ -178,6 +195,7 @@ export class ClientListComponent implements OnInit {
 
   //confirmForDelete for delete
   confirmForDelete(id: number) {
+    this.addedClients = [];
     this.confirmationService.confirm({
       message: 'Удалить клиент ' + this.selectedClient.fio + '?',
       header: 'Удаление',

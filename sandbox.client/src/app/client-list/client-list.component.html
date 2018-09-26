@@ -1,14 +1,17 @@
+<p-blockUI [blocked]="loading"></p-blockUI>
+
 <p-button label="Добавить + " class="add-btn" (onClick)="add()"></p-button>
-<p-table #dt [value]="clients"
+
+<p-table [value]="clients"
          [columns]="cols"
          selectionMode="single"
+         [customSort]="true"
+         [lazy]="true"
+         (onLazyLoad)="loadLazy($event)"
          [paginator]="true"
          [rows]="10"
          [totalRecords]="totalRecords"
-         [lazy]="true"
-         (onLazyLoad)="loadLazy($event)"
-         [loading]="loading"
-         [customSort]="true">
+         [loading]="loading">
   <ng-template pTemplate="header" let-columns>
     <tr>
       <th colspan="2">
@@ -32,8 +35,8 @@
     <tr>
       <!--1-->
       <!--<th [pSortableColumn]="columns[0].field">-->
-        <!--{{columns[0].header}}-->
-        <!--<p-sortIcon [field]="columns[0].field"></p-sortIcon>-->
+      <!--{{columns[0].header}}-->
+      <!--<p-sortIcon [field]="columns[0].field"></p-sortIcon>-->
       <!--</th>-->
 
       <th *ngFor="let col of columns" [pSortableColumn]="col.field" (click)="sort(col.field)">
@@ -59,7 +62,33 @@
   </ng-template>
 </p-table>
 
+<!--added client-->
+<p-table *ngIf="addedClients"
+         [value]="addedClients"
+         [columns]="cols"
+         selectionMode="single"
+         [rows]="1"
+         [totalRecords]="1">
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <tr class="tRow new-client" [class.selected]="rowData===selectedClient" (click)="onSelect(rowData)">
+      <td *ngFor="let col of columns">
+        {{rowData[col.field]}}
+      </td>
+      <td>
+        <p-button [disabled]="rowData!=selectedClient" class="edit-btn" (click)="edit(rowData.id)"
+                  label="..."></p-button>
+        <p-button [disabled]="rowData!=selectedClient" class="delete-btn" (click)="confirmForDelete(rowData.id)"
+                  label="-"></p-button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
 <p-confirmDialog></p-confirmDialog>
 
-<app-edit-client *ngIf="header" (onChanged)="onChanged($event)" [header]="header" [EDITEMODE]="EDITEMODE"
+<app-edit-client *ngIf="header" (onChanged)="onChanged($event)"
+                 (newClientAdded)="newClientAdded($event)"
+                 (clientEdited)="clientEdited($event)"
+                 [header]="header" [EDITEMODE]="EDITEMODE"
                  [client_detail_id]="client_detail_id" [display]="display"></app-edit-client>
+

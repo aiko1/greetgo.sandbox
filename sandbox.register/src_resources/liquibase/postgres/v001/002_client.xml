@@ -3,10 +3,35 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
+  <changeSet author="aizhan" id="create-sequence-charm_id">
+    <createSequence incrementBy="1"
+                    sequenceName="charm_id"/>
+  </changeSet>
+
+  <changeSet author="aizhan" id="create-sequence-client_id">
+    <createSequence incrementBy="1"
+                    sequenceName="client_id"/>
+  </changeSet>
+
+  <changeSet author="aizhan" id="create-sequence-client_account_id">
+    <createSequence incrementBy="1"
+                    sequenceName="client_account_id"/>
+  </changeSet>
+
+  <changeSet author="aizhan" id="create-sequence-transaction_type_id">
+    <createSequence incrementBy="1"
+                    sequenceName="transaction_type_id"/>
+  </changeSet>
+
+  <changeSet author="aizhan" id="create-sequence-client_account_transaction_id">
+    <createSequence incrementBy="1"
+                    sequenceName="client_account_transaction_id"/>
+  </changeSet>
+
   <changeSet author="aizhan" id="create-table-charm">
     <sql endDelimiter=";;"><![CDATA[
       create table charm (
-        id int not null primary key,
+        id int not null primary key DEFAULT nextval('charm_id'),
         name varchar(100),
         description text,
         energy real
@@ -17,7 +42,7 @@
   <changeSet author="aizhan" id="create-table-client">
     <sql endDelimiter=";;"><![CDATA[
       create table client (
-        id int not null primary key,
+        id int not null primary key DEFAULT nextval('client_id'),
         surname varchar(100),
         name varchar(100),
         patronymic varchar(100),
@@ -54,7 +79,7 @@
   <changeSet author="aizhan" id="create-table-client_account">
     <sql endDelimiter=";;"><![CDATA[
       create table client_account (
-        id int not null primary key,
+        id int not null primary key DEFAULT nextval('client_account_id'),
         client int REFERENCES client(id),
         money real default 0.0,
         number varchar(100),
@@ -66,7 +91,7 @@
   <changeSet author="aizhan" id="create-table-transaction_type">
     <sql endDelimiter=";;"><![CDATA[
       create table transaction_type (
-        id int not null primary key,
+        id int not null primary key DEFAULT nextval('transaction_type_id'),
         code varchar(255),
         name varchar(255)
       )
@@ -76,7 +101,7 @@
   <changeSet author="aizhan" id="create-table-client_account_transaction">
     <sql endDelimiter=";;"><![CDATA[
       create table client_account_transaction (
-        id int not null primary key,
+        id int not null primary key DEFAULT nextval('client_account_transaction_id'),
         account int REFERENCES client_account(id),
         money real,
         finished_at TimeStamp,

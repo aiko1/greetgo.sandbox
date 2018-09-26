@@ -26,7 +26,7 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void getClientList_simple_record() throws ParseException {
         deleteAllClients();
 
-        ClientDetail record = init(RND.plusInt(1000000), RND.str(10), RND.str(10));
+        ClientDetail record = init(RND.str(10), RND.str(10));
 
         params = new FilterParams();
         clients = clientRegister.get().getClients(params);
@@ -43,7 +43,7 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void getClientRecords_charm_test() throws ParseException {
         deleteAllClients();
 
-        ClientDetail cd = new ClientDetail(0, "Ivanov", "Petr", "MALE", formatDate("31.01.1993"), 1, "sensitive", "RegStreet",
+        ClientDetail cd = new ClientDetail("Ivanov", "Petr", "MALE", formatDate("31.01.1993"), 1, "sensitive", "RegStreet",
                 "RegHouse", "regFlat", "8-777-555-55-55");
 
         clientRegister.get().editClient(cd);
@@ -60,12 +60,12 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void getClientRecords_age_compute_test() throws ParseException {
         deleteAllClients();
 
-        ClientDetail cd1 = new ClientDetail(0, "Ivanov", "Petr", "MALE", formatDate("31.01.1993"), 1, "sensitive", "RegStreet",
+        ClientDetail cd1 = new ClientDetail("Ivanov", "Petr", "MALE", formatDate("31.01.1993"), 1, "sensitive", "RegStreet",
                 "RegHouse", "regFlat", "8-777-555-55-55");
 
         clientRegister.get().editClient(cd1);
 
-        ClientDetail cd2 = new ClientDetail(0, "Kim", "Petr", "MALE", formatDate("31.09.1998"), 1, "sensitive", "RegStreet",
+        ClientDetail cd2 = new ClientDetail("Kim", "Petr", "MALE", formatDate("31.09.1998"), 1, "sensitive", "RegStreet",
                 "RegHouse", "regFlat", "8-777-555-55-55");
 
         clientRegister.get().editClient(cd2);
@@ -85,9 +85,9 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void getClientList_filter() throws ParseException {
         deleteAllClients();
 
-        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
-        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "Ivan");
-        ClientDetail record3 = init(RND.plusInt(1000000), "Kim", "Petr");
+        ClientDetail record1 = init("Ivanov", "Ivan");
+        ClientDetail record2 = init("Petrov", "Ivan");
+        ClientDetail record3 = init("Kim", "Petr");
 
         params = new FilterParams();
         params.filterCol = FilterBy.NAME.toString();
@@ -107,12 +107,12 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void getClientList_sort_desc() throws ParseException {
         deleteAllClients();
 
-        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
-        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");
-        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");
-        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");
-        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
-        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");
+        ClientDetail record1 = init("Ivanov", "Ivan");
+        ClientDetail record2 = init("Petrov", "A");
+        ClientDetail record3 = init("Coi", "B");
+        ClientDetail record4 = init("Anutin", "Petr");
+        ClientDetail record5 = init("Li", "C");
+        ClientDetail record6 = init("Kim", "D");
 
         params = new FilterParams();
         params.sortBy = SortBy.NAME.toString();
@@ -129,12 +129,12 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void getClientList_sort_asc_fio() throws ParseException {
         deleteAllClients();
 
-        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
-        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "Ivan");
-        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "Petr");
-        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");
-        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "Petr");
-        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "Petr");
+        ClientDetail record1 = init("Ivanov", "Ivan");
+        ClientDetail record2 = init("Petrov", "Ivan");
+        ClientDetail record3 = init("Coi", "Petr");
+        ClientDetail record4 = init("Anutin", "Petr");
+        ClientDetail record5 = init("Li", "Petr");
+        ClientDetail record6 = init("Kim", "Petr");
 
         params = new FilterParams();
         params.sortBy = SortBy.FIO.toString();
@@ -151,12 +151,12 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void getClientList_sort_asc_charm() throws ParseException {
         deleteAllClients();
 
-        ClientDetail record1 = init_with_charm(RND.plusInt(1000000), "Ivanov", "Ivan", "polite");
-        ClientDetail record2 = init_with_charm(RND.plusInt(1000000), "Petrov", "Ivan", "ambitious");
-        ClientDetail record3 = init_with_charm(RND.plusInt(1000000), "Coi", "Petr", "quiet");
-        ClientDetail record4 = init_with_charm(RND.plusInt(1000000), "Anutin", "Petr", "artistic");
-        ClientDetail record5 = init_with_charm(RND.plusInt(1000000), "Li", "Petr", "patient");
-        ClientDetail record6 = init_with_charm(RND.plusInt(1000000), "Kim", "Petr", "aggressive");
+        ClientDetail record1 = init_with_charm("Ivanov", "Ivan", "polite");
+        ClientDetail record2 = init_with_charm("Petrov", "Ivan", "ambitious");
+        ClientDetail record3 = init_with_charm("Coi", "Petr", "quiet");
+        ClientDetail record4 = init_with_charm("Anutin", "Petr", "artistic");
+        ClientDetail record5 = init_with_charm("Li", "Petr", "patient");
+        ClientDetail record6 = init_with_charm("Kim", "Petr", "aggressive");
 
         params = new FilterParams();
         params.sortBy = SortBy.CHARM.toString();
@@ -173,12 +173,12 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void getClientList_sort_desc_charm() throws ParseException {
         deleteAllClients();
 
-        ClientDetail record1 = init_with_charm(RND.plusInt(1000000), "Ivanov", "Ivan", "polite");
-        ClientDetail record2 = init_with_charm(RND.plusInt(1000000), "Petrov", "Ivan", "ambitious");
-        ClientDetail record3 = init_with_charm(RND.plusInt(1000000), "Coi", "Petr", "quiet");
-        ClientDetail record4 = init_with_charm(RND.plusInt(1000000), "Anutin", "Petr", "artistic");
-        ClientDetail record5 = init_with_charm(RND.plusInt(1000000), "Li", "Petr", "patient");
-        ClientDetail record6 = init_with_charm(RND.plusInt(1000000), "Kim", "Petr", "aggressive");
+        ClientDetail record1 = init_with_charm("Ivanov", "Ivan", "polite");
+        ClientDetail record2 = init_with_charm("Petrov", "Ivan", "ambitious");
+        ClientDetail record3 = init_with_charm("Coi", "Petr", "quiet");
+        ClientDetail record4 = init_with_charm("Anutin", "Petr", "artistic");
+        ClientDetail record5 = init_with_charm("Li", "Petr", "patient");
+        ClientDetail record6 = init_with_charm("Kim", "Petr", "aggressive");
 
         params = new FilterParams();
         params.sortBy = SortBy.CHARM.toString();
@@ -195,12 +195,12 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void getClientList_sort_asc_totalBalance() throws ParseException {
         deleteAllClients();
 
-        ClientDetail record1 = init_with_charm(RND.plusInt(1000000), "Ivanov", "Ivan", "polite");
-        ClientDetail record2 = init_with_charm(RND.plusInt(1000000), "Petrov", "Ivan", "ambitious");
-        ClientDetail record3 = init_with_charm(RND.plusInt(1000000), "Coi", "Petr", "quiet");
-        ClientDetail record4 = init_with_charm(RND.plusInt(1000000), "Anutin", "Petr", "artistic");
-        ClientDetail record5 = init_with_charm(RND.plusInt(1000000), "Li", "Petr", "patient");
-        ClientDetail record6 = init_with_charm(RND.plusInt(1000000), "Kim", "Petr", "aggressive");
+        ClientDetail record1 = init_with_charm("Ivanov", "Ivan", "polite");
+        ClientDetail record2 = init_with_charm("Petrov", "Ivan", "ambitious");
+        ClientDetail record3 = init_with_charm("Coi", "Petr", "quiet");
+        ClientDetail record4 = init_with_charm("Anutin", "Petr", "artistic");
+        ClientDetail record5 = init_with_charm("Li", "Petr", "patient");
+        ClientDetail record6 = init_with_charm("Kim", "Petr", "aggressive");
 
         params = new FilterParams();
         params.sortBy = SortBy.TOTALBALANCE.toString();
@@ -215,12 +215,12 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void getClientList_sort_filter() throws ParseException {
         deleteAllClients();
 
-        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
-        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");
-        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");
-        ClientDetail record4 = init(RND.plusInt(1000000), "Petrova", "Petr");
-        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
-        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");
+        ClientDetail record1 = init("Ivanov", "Ivan");
+        ClientDetail record2 = init("Petrov", "A");
+        ClientDetail record3 = init("Coi", "B");
+        ClientDetail record4 = init("Petrova", "Petr");
+        ClientDetail record5 = init("Li", "C");
+        ClientDetail record6 = init("Kim", "D");
 
         params = new FilterParams();
         params.filterCol = FilterBy.SURNAME.toString();
@@ -239,12 +239,12 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void getClientList_sort_filter_desc() throws ParseException {
         deleteAllClients();
 
-        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
-        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");
-        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");
-        ClientDetail record4 = init(RND.plusInt(1000000), "Petrova", "AA");
-        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
-        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "AAA");
+        ClientDetail record1 = init("Ivanov", "Ivan");
+        ClientDetail record2 = init("Petrov", "A");
+        ClientDetail record3 = init("Coi", "B");
+        ClientDetail record4 = init("Petrova", "AA");
+        ClientDetail record5 = init("Li", "C");
+        ClientDetail record6 = init("Kim", "AAA");
 
         params = new FilterParams();
         params.filterCol = FilterBy.NAME.toString();
@@ -264,12 +264,12 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void limit_test() throws ParseException {
         deleteAllClients();
 
-        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
-        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");
-        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");
-        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");
-        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
-        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");
+        ClientDetail record1 = init("Ivanov", "Ivan");
+        ClientDetail record2 = init("Petrov", "A");
+        ClientDetail record3 = init("Coi", "B");
+        ClientDetail record4 = init("Anutin", "Petr");
+        ClientDetail record5 = init("Li", "C");
+        ClientDetail record6 = init("Kim", "D");
 
         params = new FilterParams();
         params.limit = 2;
@@ -283,12 +283,12 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void offset_test() throws ParseException {
         deleteAllClients();
 
-        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
-        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");
-        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");
-        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");
-        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
-        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");
+        ClientDetail record1 = init("Ivanov", "Ivan");
+        ClientDetail record2 = init("Petrov", "A");
+        ClientDetail record3 = init("Coi", "B");
+        ClientDetail record4 = init("Anutin", "Petr");
+        ClientDetail record5 = init("Li", "C");
+        ClientDetail record6 = init("Kim", "D");
 
         params = new FilterParams();
         params.offset = 2;
@@ -302,12 +302,12 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void limit_offset_test() throws ParseException {
         deleteAllClients();
 
-        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
-        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");
-        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");
-        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");
-        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
-        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");
+        ClientDetail record1 = init("Ivanov", "Ivan");
+        ClientDetail record2 = init("Petrov", "A");
+        ClientDetail record3 = init("Coi", "B");
+        ClientDetail record4 = init("Anutin", "Petr");
+        ClientDetail record5 = init("Li", "C");
+        ClientDetail record6 = init("Kim", "D");
 
         params = new FilterParams();
         params.limit = 3;
@@ -322,12 +322,12 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void sort_limit_offset_test() throws ParseException {
         deleteAllClients();
 
-        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");//3
-        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");//6
-        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");//2
-        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");//1
-        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");//5
-        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");//4
+        ClientDetail record1 = init("Ivanov", "Ivan");//3
+        ClientDetail record2 = init("Petrov", "A");//6
+        ClientDetail record3 = init("Coi", "B");//2
+        ClientDetail record4 = init("Anutin", "Petr");//1
+        ClientDetail record5 = init("Li", "C");//5
+        ClientDetail record6 = init("Kim", "D");//4
 
         params = new FilterParams();
         params.sortBy = SortBy.FIO.toString();
@@ -347,12 +347,12 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void sort_filter_limit_offset_test() throws ParseException {
         deleteAllClients();
 
-        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");//4
-        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");//1
-        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");//5
-        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");//6
-        ClientDetail record5 = init(RND.plusInt(1000000), "Ka", "C");//3
-        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");//2
+        ClientDetail record1 = init("Ivanov", "Ivan");//4
+        ClientDetail record2 = init("Petrov", "A");//1
+        ClientDetail record3 = init("Coi", "B");//5
+        ClientDetail record4 = init("Anutin", "Petr");//6
+        ClientDetail record5 = init("Ka", "C");//3
+        ClientDetail record6 = init("Kim", "D");//2
 
         params = new FilterParams();
         params.sortBy = SortBy.FIO.toString();
@@ -372,14 +372,14 @@ public class ClientRegisterImplTest extends ParentTestNg {
     public void deleteClient_test() throws ParseException {
         deleteAllClients();
 
-        ClientDetail record1 = init(RND.plusInt(1000000), "Ivanov", "Ivan");
-        ClientDetail record2 = init(RND.plusInt(1000000), "Petrov", "A");
+        ClientDetail record1 = init("Ivanov", "Ivan");
+        ClientDetail record2 = init("Petrov", "A");
         //
-        ClientDetail record3 = init(RND.plusInt(1000000), "Coi", "B");
+        ClientDetail record3 = init("Coi", "B");
         //
-        ClientDetail record4 = init(RND.plusInt(1000000), "Anutin", "Petr");
-        ClientDetail record5 = init(RND.plusInt(1000000), "Li", "C");
-        ClientDetail record6 = init(RND.plusInt(1000000), "Kim", "D");
+        ClientDetail record4 = init("Anutin", "Petr");
+        ClientDetail record5 = init("Li", "C");
+        ClientDetail record6 = init("Kim", "D");
 
         clientRegister.get().deleteClient(record3.id);
         params = new FilterParams();
@@ -399,8 +399,9 @@ public class ClientRegisterImplTest extends ParentTestNg {
         deleteAllClients();
         //init data
 
-        ClientDetail cd = new ClientDetail(0, "Ivanov", "Petr", "MALE", formatDate("31.01.1993"), 1, "sensitive", "RegStreet",
+        ClientDetail cd = new ClientDetail("Ivanov", "Petr", "MALE", formatDate("31.01.1993"), 1, "sensitive", "RegStreet",
                 "RegHouse", "regFlat", "8-777-555-55-55");
+        cd.id = 0;
 //        clientTestDao.get().updateClientField(id, "charm", "(select id from charm where name='" + charm + "')");
         cd.mobileNumber3 = "4";
 
@@ -421,20 +422,49 @@ public class ClientRegisterImplTest extends ParentTestNg {
     }
 
     @Test
+    public void getAddedClient_test() throws ParseException {
+        deleteAllClients();
+        //init data
+
+        ClientDetail cd = new ClientDetail("Ivanov", "Petr", "MALE", formatDate("31.01.1993"), 1, "sensitive", "RegStreet",
+                "RegHouse", "regFlat", "8-777-555-55-55");
+        cd.id = 0;
+//        clientTestDao.get().updateClientField(id, "charm", "(select id from charm where name='" + charm + "')");
+        cd.mobileNumber3 = "4";
+        int c = clientTestDao.get().selectCharmIdByName(cd.charm);
+        clientTestDao.get().insertTestClient(cd, c);
+        cd.id = clientTestDao.get().selectNewClientID();
+        clientTestDao.get().insertTestAddrREG(cd);
+        clientTestDao.get().insertTestPhone(cd);
+
+        //call testing method
+        ClientRecord cr = clientRegister.get().getAddedClient();
+
+        //test
+        assertThat(cr).isNotNull();
+        assertThat(cd.name).isEqualTo(cr.name);
+        assertThat(cd.charm).isEqualTo(cr.charm);
+        assertThat(cr.surname).isEqualTo(cd.surname);
+    }
+
+    @Test
     public void editClient_test() throws ParseException {
         deleteAllClients();
 
         //init data
-        int id = RND.plusInt(1000000);
-        ClientDetail cd = new ClientDetail(id, "Igoreva", "Natazha",
+        ClientDetail cd = new ClientDetail("Igoreva", "Natazha",
                 "FEMALE", formatDate("17.04.1986"), 1, "sensitive",
                 "s84", "f84", "h84", "87002000025");
+
         int c = clientTestDao.get().selectCharmIdByName(cd.charm);
         clientTestDao.get().insertTestClient(cd, c);
+        cd.id = clientTestDao.get().selectNewClientID();
+        System.out.println(cd.id);
         clientTestDao.get().insertTestAddrREG(cd);
         clientTestDao.get().insertTestPhone(cd);
 
-        ClientDetail cdTest = clientTestDao.get().selectClientByID(id);
+        ClientDetail cdTest = clientTestDao.get().selectClientByID(cd.id);
+        System.out.println(cdTest);
         cdTest.name = "Nada";
         cdTest.mobileNumber1 = "81112223335";
         cdTest.mobileNumber3 = "55555555";
@@ -448,7 +478,7 @@ public class ClientRegisterImplTest extends ParentTestNg {
 
         assertThat(cdTest1).isNotNull();
         assertThat(cdTest.id).isEqualTo(cdTest1.id);
-        assertThat(cdTest1.id).isEqualTo(id);
+        assertThat(cdTest1.id).isEqualTo(cd.id);
         assertThat(cdTest1.name).isEqualTo("Nada");
         assertThat(cdTest1.mobileNumber1).isEqualTo("81112223335");
         assertThat(cdTest1.mobileNumber3).isEqualTo("55555555");
@@ -468,9 +498,10 @@ public class ClientRegisterImplTest extends ParentTestNg {
         deleteAllClients();
 
         //init data
-        ClientDetail cd = new ClientDetail(0, "Igoreva", "Natazha",
+        ClientDetail cd = new ClientDetail("Igoreva", "Natazha",
                 "FEMALE", java.sql.Date.valueOf("1986-04-17"), 1, "sensitive",
                 "s84", "f84", "h84", "87002000025");
+        cd.id = 0;
         cd.mobileNumber2 = "87002000025";
         cd.mobileNumber3 = "87002000025";
 
@@ -491,16 +522,17 @@ public class ClientRegisterImplTest extends ParentTestNg {
         deleteAllClients();
 
         //init data
-        int id = RND.plusInt(1000000);
-        ClientDetail cd = new ClientDetail(id, "Igoreva", "Natazha",
+        ClientDetail cd = new ClientDetail("Igoreva", "Natazha",
                 "FEMALE", java.sql.Date.valueOf("1986-04-17"), 1, "sensitive",
                 "s84", "f84", "h84", "87002000025");
         int c = clientTestDao.get().selectCharmIdByName(cd.charm);
         clientTestDao.get().insertTestClient(cd, c);
+        cd.id = clientTestDao.get().selectNewClientID();
+
         clientTestDao.get().insertTestAddrREG(cd);
         clientTestDao.get().insertTestPhone(cd);
 
-        ClientDetail cdTest = clientTestDao.get().selectClientByID(id);
+        ClientDetail cdTest = clientTestDao.get().selectClientByName("Natazha");
 
         cdTest.mobileNumber2 = "22";
         cdTest.mobileNumber3 = "22";
@@ -513,7 +545,6 @@ public class ClientRegisterImplTest extends ParentTestNg {
 
         assertThat(cdTest1).isNotNull();
         assertThat(cdTest.id).isEqualTo(cdTest1.id);
-        assertThat(cdTest1.id).isEqualTo(id);
         assertThat(cdTest1.mobileNumber2).isEqualTo("22");
         assertThat(cdTest1.mobileNumber3).isEqualTo(null);
         assertThat(cdTest1.factStreet).isEqualTo("test street");
@@ -523,26 +554,28 @@ public class ClientRegisterImplTest extends ParentTestNg {
         clientTestDao.get().deleteAllClients();
     }
 
-    private ClientDetail init(int id, String surname, String name) throws ParseException {
-
-        ClientDetail cd = new ClientDetail(id, surname, name,
+    private ClientDetail init(String surname, String name) throws ParseException {
+        ClientDetail cd = new ClientDetail(surname, name,
                 "FEMALE", formatDate("17.04.1986"), 1, "sensitive",
                 "s84", "f84", "h84", "87002000025");
         int c = clientTestDao.get().selectCharmIdByName(cd.charm);
+
         clientTestDao.get().insertTestClient(cd, c);
+        cd.id = clientTestDao.get().selectNewClientID();
+
         clientTestDao.get().insertTestAddrREG(cd);
         clientTestDao.get().insertTestPhone(cd);
-
         return cd;
     }
 
-    private ClientDetail init_with_charm(int id, String surname, String name, String charm) throws ParseException {
+    private ClientDetail init_with_charm(String surname, String name, String charm) throws ParseException {
 
-        ClientDetail cd = new ClientDetail(id, surname, name,
+        ClientDetail cd = new ClientDetail(surname, name,
                 "FEMALE", formatDate("17.04.1986"), 1, charm,
                 "s84", "f84", "h84", "87002000025");
         int c = clientTestDao.get().selectCharmIdByName(cd.charm);
         clientTestDao.get().insertTestClient(cd, c);
+        cd.id = clientTestDao.get().selectNewClientID();
         clientTestDao.get().insertTestAddrREG(cd);
         clientTestDao.get().insertTestPhone(cd);
 

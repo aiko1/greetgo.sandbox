@@ -30,9 +30,8 @@ public class ClientDetail {
     public String mobileNumber2;
     public String mobileNumber3;
 
-    public ClientDetail(int id, String surname, String name, String gender, Date birthDate, int actual,
+    public ClientDetail(String surname, String name, String gender, Date birthDate, int actual,
                         String charm, String regStreet, String regNo, String regFlat, String mobileNumber1) {
-        this.id = id;
         this.surname = surname;
         this.name = name;
         this.gender = gender;

@@ -18,12 +18,13 @@ export class EditClientComponent implements OnInit {
   @Input() EDITEMODE: boolean = false;
 
   clientDetail: ClientDetail;
-  addedClient: ClientDetail;
   charms: Charm[];
   symbols: RegExp = /^[a-zA-Z а-яА-Я]+$/;
   clientform: FormGroup;
 
   @Output() onChanged = new EventEmitter<boolean>();
+  @Output() newClientAdded = new EventEmitter<boolean>();
+  @Output() clientEdited = new EventEmitter<boolean>();
 
   constructor(private _service: ClientService,
               private fb: FormBuilder) {
@@ -36,17 +37,17 @@ export class EditClientComponent implements OnInit {
       if (this.client_detail_id != 0) {
         this._service.getClientDetail(this.client_detail_id).subscribe((content) => {
           this.clientDetail = content;
-          console.log(this.clientDetail.birthDate)
+          console.log(this.clientDetail.birthDate);
         });
       } else {
         this.clientDetail = new ClientDetail();
       }
-
     }
   }
 
   ngOnInit() {
     this.setValidators();
+    this.loadCharmList();
   }
 
   //dropdown clicked
@@ -92,50 +93,20 @@ export class EditClientComponent implements OnInit {
     this.onChanged.emit(this.display);
   }
 
-
-  // setClientRecord() {
-  // this.selectedClient.surname = this.clientDetail.surname;
-  // this.selectedClient.name = this.clientDetail.name;
-  // this.selectedClient.patronymic = this.clientDetail.patronymic;
-  // this.clientDetail.fio = this.clientDetail.surname + ' ' + this.clientDetail.name + ' ' + this.clientDetail.patronymic;
-  // this.selectedClient.fio = this.clientDetail.fio;
-  // this.selectedClient.charm = this.clientDetail.charm;
-  // this.selectedClient.age = (new Date()).getFullYear() - (+this.clientDetail.birthDate.slice(6));
-  // }
-
   saveClient() {
-
-    // this.clientDetail.birthDate = this._dateForDB.transform(this.clientDetail.birthDate)
-
     if (this.EDITEMODE) {
-      // this.setClientRecord();
       this._service.editClient(this.clientDetail)
-        .then(() => this.close());
+        .then(() => {
+          this.clientEdited.emit(true);
+          this.close();
+        });
     } else {
-      // this.setClientRecord();
       this.clientDetail.id = 0;
       this._service.editClient(this.clientDetail)
         .then((c) => {
-          this.addedClient = c;
-          console.log(this.addedClient);
+          this.newClientAdded.emit(true);
           this.close();
         });
-
-      // this._service.addClient(this.clientDetail)
-      //   .subscribe((c) => {
-      //     this.addedClient = c;
-      //     this.close();
-      //   });
-
-      // this._service.addClientDetailes(this.clientDetail)
-      //   .subscribe(() =>
-      //     this._service.addClientRecord(this.selectedClient)
-      //       .subscribe((c) => {
-      //           this.clients.push(c);
-      //           this.close();
-      //         }
-      //       )
-      //   );
     }
   }
 

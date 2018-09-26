@@ -41,17 +41,19 @@ public interface ClientDao {
             "where c.name=#{name} and c.actual=1 limit 1")
     ClientDetail selectClientByName(@Param("name") String name);
 
-    @Select("update client set actual=0 where id=#{id}")
+    @Update("update client set actual=0 where id=#{id}")
     void deleteClientByID(@Param("id") int id);
 
     @Select("select id from charm where name=#{name}")
     int selectCharmIdByName(@Param("name") String name);
 
-    @Insert("insert into client (id, surname, name, gender, birth_date, actual, charm) " +
-            "values (#{id}, #{cd.surname}, #{cd.name}, #{cd.gender}, " +
+    @Select("select max(id) from client")
+    int selectNewClientID();
+
+    @Insert("insert into client (surname, name, gender, birth_date, actual, charm) " +
+            "values (#{cd.surname}, #{cd.name}, #{cd.gender}, " +
             "#{cd.birthDate}, 1, #{charm})")
-    void insertIntoClient(@Param("id") int id,
-                          @Param("cd") ClientDetail cd,
+    void insertIntoClient(@Param("cd") ClientDetail cd,
                           @Param("charm") int charm);
 
     @Update("update client set ${fieldName} = #{fieldValue} where id = #{id}")
@@ -91,12 +93,12 @@ public interface ClientDao {
     @Select("select client from client_phone where client=#{client} " +
             "and type in ('MOBILE1', 'MOBILE2', 'MOBILE3') and number=#{number}")
     Integer checkForDublicateMobileNumber(@Param("client") int client,
-                                      @Param("number") String number);
+                                          @Param("number") String number);
 
     @Select("select client from client_phone where client=#{client} " +
             "and type=#{type}")
     Integer checkForExistPhoneNumberType(@Param("client") int client,
-                                     @Param("type") String type);
+                                         @Param("type") String type);
 
     @Select("select client from client_addr where client=#{client} and type='FACT'")
     Integer checkIfFactAddressRecordExists(@Param("client") int client);

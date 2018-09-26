@@ -10,3 +10,9 @@
   background-color: cadetblue !important;
   color: white !important;
 }
+
+.new-client {
+  color: darkslategray !important;
+  font-weight: bold !important;
+  /*background-color: beige !important;*/
+}

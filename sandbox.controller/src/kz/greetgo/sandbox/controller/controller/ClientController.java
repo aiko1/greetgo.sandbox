@@ -37,6 +37,13 @@ public class ClientController implements Controller {
 
     @ToJson
     @PublicAccess
+    @OnGet("/new")
+    public ClientRecord getAddedClient() {
+        return clientRegister.get().getAddedClient();
+    }
+
+    @ToJson
+    @PublicAccess
     @OnGet("/charms")
     public List<Charm> getCharmsList() {
         return clientRegister.get().getCharmsList();
